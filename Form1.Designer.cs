@@ -185,12 +185,12 @@
             // 
             // btnSaveConfig
             // 
-            this.btnSaveConfig.Location = new System.Drawing.Point(894, 282);
+            this.btnSaveConfig.Location = new System.Drawing.Point(808, 282);
             this.btnSaveConfig.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveConfig.Name = "btnSaveConfig";
-            this.btnSaveConfig.Size = new System.Drawing.Size(138, 34);
+            this.btnSaveConfig.Size = new System.Drawing.Size(224, 34);
             this.btnSaveConfig.TabIndex = 2;
-            this.btnSaveConfig.Text = "保存配置";
+            this.btnSaveConfig.Text = "保存配置/检查版本";
             this.btnSaveConfig.UseVisualStyleBackColor = true;
             this.btnSaveConfig.Click += new System.EventHandler(this.btnSaveConfig_Click);
             // 
@@ -423,7 +423,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "鸣潮官服B服切换器";
+            this.Text = "鸣潮官服B服切换器1.0.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
