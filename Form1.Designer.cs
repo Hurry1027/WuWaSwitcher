@@ -58,6 +58,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnSaveConfig = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.linkLabelGitee = new System.Windows.Forms.LinkLabel();
             this.btn_bakcupCurrentVersion = new System.Windows.Forms.Button();
             this.checkBox_isAutoClose = new System.Windows.Forms.CheckBox();
@@ -195,6 +196,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.linkLabelGitee);
             this.groupBox3.Controls.Add(this.btn_bakcupCurrentVersion);
             this.groupBox3.Controls.Add(this.checkBox_isAutoClose);
@@ -211,6 +213,15 @@
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "操作";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(592, 91);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(224, 18);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "版本号变化后务必备份版本";
             // 
             // linkLabelGitee
             // 
@@ -237,7 +248,7 @@
             // checkBox_isAutoClose
             // 
             this.checkBox_isAutoClose.AutoSize = true;
-            this.checkBox_isAutoClose.Location = new System.Drawing.Point(617, 116);
+            this.checkBox_isAutoClose.Location = new System.Drawing.Point(595, 143);
             this.checkBox_isAutoClose.Name = "checkBox_isAutoClose";
             this.checkBox_isAutoClose.Size = new System.Drawing.Size(178, 22);
             this.checkBox_isAutoClose.TabIndex = 5;
@@ -442,6 +453,7 @@
         private System.Windows.Forms.Button btnLaunchBilibili;
         private System.Windows.Forms.Button btnLaunchOfficial;
         private System.Windows.Forms.LinkLabel linkLabelGitee;
+        private System.Windows.Forms.Label label5;
     }
 }
 

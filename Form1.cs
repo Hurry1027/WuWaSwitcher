@@ -600,11 +600,13 @@ namespace WuWaSwitcher {
                 if (!CheckTextConfig() || !CheckCurrentVersion()) { return false; }
                 // 备份目录的根目录
                 string rootBackupPath = currentVersion;
+                if (!Directory.Exists(rootBackupPath)) {
+                    Directory.CreateDirectory(rootBackupPath);
+                }
                 // 备份文件
                 foreach (string fileName in config.filesToBackup) {
                     string sourceFile = Path.Combine(config.gameFolderPath, fileName);
                     string destFile = Path.Combine(rootBackupPath, fileName);
-                    
                     if (File.Exists(sourceFile)) {
                         File.Copy(sourceFile, destFile, true);
                     }
@@ -800,7 +802,6 @@ namespace WuWaSwitcher {
                 MessageBox.Show("无法打开链接: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
     }
 
     [DataContract]
