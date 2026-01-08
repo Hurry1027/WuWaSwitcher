@@ -7,12 +7,14 @@
     <ProjectGuid>{8EFCDF34-1263-4149-A878-989BCE1DC977}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>WuWaSwitcher</RootNamespace>
-    <AssemblyName>鸣潮官服B服转换器</AssemblyName>
+    <AssemblyName>鸣潮官服B服WeGame切换器</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,16 +27,14 @@
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>https://gitee.com/wn1027/wuwa-switcher</SupportUrl>
     <ErrorReportUrl>https://gitee.com/wn1027/wuwa-switcher</ErrorReportUrl>
-    <ProductName>鸣潮官服B服转换器</ProductName>
+    <ProductName>鸣潮官服B服WeGame切换器</ProductName>
     <PublisherName>Wn1027</PublisherName>
-    <SuiteName>鸣潮官服B服转换器</SuiteName>
+    <SuiteName>鸣潮官服B服WeGame切换器</SuiteName>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -104,6 +104,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\btnOther.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Code\btnSwitch.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +118,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Code\utils.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

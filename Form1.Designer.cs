@@ -17,7 +17,7 @@
         private System.Windows.Forms.Button btnRefreshIcon;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label lblCurrentVersion;
-        private System.Windows.Forms.Button btnSwitchVersion;
+        private System.Windows.Forms.Button btnSwitchOfficialVersion;
         private System.Windows.Forms.Button btnLaunchCurrent;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
@@ -48,6 +48,10 @@
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnLaunchWeGame = new System.Windows.Forms.Button();
+            this.btnBrowseWeGame = new System.Windows.Forms.Button();
+            this.txtWeGamePath = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.btnLaunchOfficial = new System.Windows.Forms.Button();
             this.btnLaunchBilibili = new System.Windows.Forms.Button();
             this.btnBrowseBilibili = new System.Windows.Forms.Button();
@@ -58,15 +62,20 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnSaveConfig = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.linkLabelGitee = new System.Windows.Forms.LinkLabel();
+            this.btnCheckGame = new System.Windows.Forms.Button();
+            this.btnBackupSwitchBilibiliVersion = new System.Windows.Forms.Button();
+            this.btnSwitchBilibiliVersion = new System.Windows.Forms.Button();
+            this.btnBackupSwitchWegameVersion = new System.Windows.Forms.Button();
+            this.btnSwitchWegameVersion = new System.Windows.Forms.Button();
             this.btn_bakcupCurrentVersion = new System.Windows.Forms.Button();
             this.checkBox_isAutoClose = new System.Windows.Forms.CheckBox();
-            this.btnBackupSwitchVersion = new System.Windows.Forms.Button();
+            this.btnBackupSwitchOfficialVersion = new System.Windows.Forms.Button();
             this.lblCurrentVersion = new System.Windows.Forms.Label();
-            this.btnSwitchVersion = new System.Windows.Forms.Button();
+            this.btnSwitchOfficialVersion = new System.Windows.Forms.Button();
             this.btnLaunchCurrent = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.linkLabelGitee = new System.Windows.Forms.LinkLabel();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -86,6 +95,10 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnLaunchWeGame);
+            this.groupBox2.Controls.Add(this.btnBrowseWeGame);
+            this.groupBox2.Controls.Add(this.txtWeGamePath);
+            this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.btnLaunchOfficial);
             this.groupBox2.Controls.Add(this.btnLaunchBilibili);
             this.groupBox2.Controls.Add(this.btnBrowseBilibili);
@@ -94,14 +107,54 @@
             this.groupBox2.Controls.Add(this.txtBilibiliPath);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(18, 134);
+            this.groupBox2.Location = new System.Drawing.Point(18, 117);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox2.Size = new System.Drawing.Size(1014, 138);
+            this.groupBox2.Size = new System.Drawing.Size(1014, 162);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "启动器路径设置(launcher.exe)";
+            // 
+            // btnLaunchWeGame
+            // 
+            this.btnLaunchWeGame.Location = new System.Drawing.Point(900, 117);
+            this.btnLaunchWeGame.Margin = new System.Windows.Forms.Padding(4);
+            this.btnLaunchWeGame.Name = "btnLaunchWeGame";
+            this.btnLaunchWeGame.Size = new System.Drawing.Size(104, 34);
+            this.btnLaunchWeGame.TabIndex = 11;
+            this.btnLaunchWeGame.Text = "启动";
+            this.btnLaunchWeGame.UseVisualStyleBackColor = true;
+            this.btnLaunchWeGame.Click += new System.EventHandler(this.btnLaunchWeGame_Click);
+            // 
+            // btnBrowseWeGame
+            // 
+            this.btnBrowseWeGame.Location = new System.Drawing.Point(788, 116);
+            this.btnBrowseWeGame.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBrowseWeGame.Name = "btnBrowseWeGame";
+            this.btnBrowseWeGame.Size = new System.Drawing.Size(104, 34);
+            this.btnBrowseWeGame.TabIndex = 10;
+            this.btnBrowseWeGame.Text = "浏览...";
+            this.btnBrowseWeGame.UseVisualStyleBackColor = true;
+            this.btnBrowseWeGame.Click += new System.EventHandler(this.btnBrowseWeGame_Click);
+            // 
+            // txtWeGamePath
+            // 
+            this.txtWeGamePath.Location = new System.Drawing.Point(148, 121);
+            this.txtWeGamePath.Margin = new System.Windows.Forms.Padding(4);
+            this.txtWeGamePath.Name = "txtWeGamePath";
+            this.txtWeGamePath.Size = new System.Drawing.Size(634, 28);
+            this.txtWeGamePath.TabIndex = 9;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(9, 125);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(116, 18);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "WeGame路径：";
             // 
             // btnLaunchOfficial
             // 
@@ -185,27 +238,30 @@
             // 
             // btnSaveConfig
             // 
-            this.btnSaveConfig.Location = new System.Drawing.Point(808, 282);
+            this.btnSaveConfig.Location = new System.Drawing.Point(918, 287);
             this.btnSaveConfig.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveConfig.Name = "btnSaveConfig";
-            this.btnSaveConfig.Size = new System.Drawing.Size(224, 34);
+            this.btnSaveConfig.Size = new System.Drawing.Size(102, 34);
             this.btnSaveConfig.TabIndex = 2;
-            this.btnSaveConfig.Text = "保存配置/检查版本";
+            this.btnSaveConfig.Text = "保存配置";
             this.btnSaveConfig.UseVisualStyleBackColor = true;
             this.btnSaveConfig.Click += new System.EventHandler(this.btnSaveConfig_Click);
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.linkLabelGitee);
+            this.groupBox3.Controls.Add(this.btnCheckGame);
+            this.groupBox3.Controls.Add(this.btnBackupSwitchBilibiliVersion);
+            this.groupBox3.Controls.Add(this.btnSwitchBilibiliVersion);
+            this.groupBox3.Controls.Add(this.btnBackupSwitchWegameVersion);
+            this.groupBox3.Controls.Add(this.btnSwitchWegameVersion);
             this.groupBox3.Controls.Add(this.btn_bakcupCurrentVersion);
             this.groupBox3.Controls.Add(this.checkBox_isAutoClose);
-            this.groupBox3.Controls.Add(this.btnBackupSwitchVersion);
+            this.groupBox3.Controls.Add(this.btnBackupSwitchOfficialVersion);
             this.groupBox3.Controls.Add(this.lblCurrentVersion);
-            this.groupBox3.Controls.Add(this.btnSwitchVersion);
+            this.groupBox3.Controls.Add(this.btnSwitchOfficialVersion);
             this.groupBox3.Controls.Add(this.btnLaunchCurrent);
             this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Location = new System.Drawing.Point(18, 324);
+            this.groupBox3.Location = new System.Drawing.Point(16, 340);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
@@ -214,99 +270,159 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "操作";
             // 
-            // label5
+            // btnCheckGame
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(592, 91);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(224, 18);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "版本号变化后务必备份版本";
+            this.btnCheckGame.Location = new System.Drawing.Point(704, 24);
+            this.btnCheckGame.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCheckGame.Name = "btnCheckGame";
+            this.btnCheckGame.Size = new System.Drawing.Size(102, 34);
+            this.btnCheckGame.TabIndex = 8;
+            this.btnCheckGame.Text = "检查版本";
+            this.btnCheckGame.UseVisualStyleBackColor = true;
+            this.btnCheckGame.Click += new System.EventHandler(this.btnCheckGame_Click);
             // 
-            // linkLabelGitee
+            // btnBackupSwitchBilibiliVersion
             // 
-            this.linkLabelGitee.AutoSize = true;
-            this.linkLabelGitee.Location = new System.Drawing.Point(926, 158);
-            this.linkLabelGitee.Name = "linkLabelGitee";
-            this.linkLabelGitee.Size = new System.Drawing.Size(80, 18);
-            this.linkLabelGitee.TabIndex = 7;
-            this.linkLabelGitee.TabStop = true;
-            this.linkLabelGitee.Text = "项目主页";
-            this.linkLabelGitee.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelGitee_LinkClicked);
+            this.btnBackupSwitchBilibiliVersion.Location = new System.Drawing.Point(484, 131);
+            this.btnBackupSwitchBilibiliVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBackupSwitchBilibiliVersion.Name = "btnBackupSwitchBilibiliVersion";
+            this.btnBackupSwitchBilibiliVersion.Size = new System.Drawing.Size(228, 45);
+            this.btnBackupSwitchBilibiliVersion.TabIndex = 12;
+            this.btnBackupSwitchBilibiliVersion.Text = "备份并切换到Bilibili端";
+            this.btnBackupSwitchBilibiliVersion.UseVisualStyleBackColor = true;
+            this.btnBackupSwitchBilibiliVersion.Click += new System.EventHandler(this.btnBackupSwitchBilibiliVersion_Click);
+            // 
+            // btnSwitchBilibiliVersion
+            // 
+            this.btnSwitchBilibiliVersion.Location = new System.Drawing.Point(484, 78);
+            this.btnSwitchBilibiliVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSwitchBilibiliVersion.Name = "btnSwitchBilibiliVersion";
+            this.btnSwitchBilibiliVersion.Size = new System.Drawing.Size(228, 45);
+            this.btnSwitchBilibiliVersion.TabIndex = 11;
+            this.btnSwitchBilibiliVersion.Text = "切换到Bilibili端";
+            this.btnSwitchBilibiliVersion.UseVisualStyleBackColor = true;
+            this.btnSwitchBilibiliVersion.Click += new System.EventHandler(this.btnSwitchBilibiliVersion_Click);
+            // 
+            // btnBackupSwitchWegameVersion
+            // 
+            this.btnBackupSwitchWegameVersion.Location = new System.Drawing.Point(720, 131);
+            this.btnBackupSwitchWegameVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBackupSwitchWegameVersion.Name = "btnBackupSwitchWegameVersion";
+            this.btnBackupSwitchWegameVersion.Size = new System.Drawing.Size(228, 45);
+            this.btnBackupSwitchWegameVersion.TabIndex = 10;
+            this.btnBackupSwitchWegameVersion.Text = "备份并切换到WeGame端";
+            this.btnBackupSwitchWegameVersion.UseVisualStyleBackColor = true;
+            this.btnBackupSwitchWegameVersion.Click += new System.EventHandler(this.btnBackupSwitchWegameVersion_Click);
+            // 
+            // btnSwitchWegameVersion
+            // 
+            this.btnSwitchWegameVersion.Location = new System.Drawing.Point(720, 78);
+            this.btnSwitchWegameVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSwitchWegameVersion.Name = "btnSwitchWegameVersion";
+            this.btnSwitchWegameVersion.Size = new System.Drawing.Size(228, 45);
+            this.btnSwitchWegameVersion.TabIndex = 9;
+            this.btnSwitchWegameVersion.Text = "切换到WeGame端";
+            this.btnSwitchWegameVersion.UseVisualStyleBackColor = true;
+            this.btnSwitchWegameVersion.Click += new System.EventHandler(this.btnSwitchWegameVersion_Click);
             // 
             // btn_bakcupCurrentVersion
             // 
-            this.btn_bakcupCurrentVersion.Location = new System.Drawing.Point(348, 78);
+            this.btn_bakcupCurrentVersion.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btn_bakcupCurrentVersion.Location = new System.Drawing.Point(12, 131);
             this.btn_bakcupCurrentVersion.Margin = new System.Windows.Forms.Padding(4);
             this.btn_bakcupCurrentVersion.Name = "btn_bakcupCurrentVersion";
             this.btn_bakcupCurrentVersion.Size = new System.Drawing.Size(228, 45);
             this.btn_bakcupCurrentVersion.TabIndex = 6;
-            this.btn_bakcupCurrentVersion.Text = "备份当前版本";
+            this.btn_bakcupCurrentVersion.Text = "备份当前客户端";
             this.btn_bakcupCurrentVersion.UseVisualStyleBackColor = true;
             this.btn_bakcupCurrentVersion.Click += new System.EventHandler(this.btnBackup_Click);
             // 
             // checkBox_isAutoClose
             // 
             this.checkBox_isAutoClose.AutoSize = true;
-            this.checkBox_isAutoClose.Location = new System.Drawing.Point(595, 143);
+            this.checkBox_isAutoClose.Location = new System.Drawing.Point(828, 31);
             this.checkBox_isAutoClose.Name = "checkBox_isAutoClose";
             this.checkBox_isAutoClose.Size = new System.Drawing.Size(178, 22);
             this.checkBox_isAutoClose.TabIndex = 5;
             this.checkBox_isAutoClose.Text = "启动后关闭切换器";
             this.checkBox_isAutoClose.UseVisualStyleBackColor = true;
             // 
-            // btnBackupSwitchVersion
+            // btnBackupSwitchOfficialVersion
             // 
-            this.btnBackupSwitchVersion.Location = new System.Drawing.Point(348, 131);
-            this.btnBackupSwitchVersion.Margin = new System.Windows.Forms.Padding(4);
-            this.btnBackupSwitchVersion.Name = "btnBackupSwitchVersion";
-            this.btnBackupSwitchVersion.Size = new System.Drawing.Size(228, 45);
-            this.btnBackupSwitchVersion.TabIndex = 4;
-            this.btnBackupSwitchVersion.Text = "备份并切换版本";
-            this.btnBackupSwitchVersion.UseVisualStyleBackColor = true;
-            this.btnBackupSwitchVersion.Click += new System.EventHandler(this.btnBackupSwitchVersion_Click);
+            this.btnBackupSwitchOfficialVersion.Location = new System.Drawing.Point(248, 131);
+            this.btnBackupSwitchOfficialVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBackupSwitchOfficialVersion.Name = "btnBackupSwitchOfficialVersion";
+            this.btnBackupSwitchOfficialVersion.Size = new System.Drawing.Size(228, 45);
+            this.btnBackupSwitchOfficialVersion.TabIndex = 4;
+            this.btnBackupSwitchOfficialVersion.Text = "备份并切换到官方端";
+            this.btnBackupSwitchOfficialVersion.UseVisualStyleBackColor = true;
+            this.btnBackupSwitchOfficialVersion.Click += new System.EventHandler(this.btnBackupSwitchOfficialVersion_Click);
             // 
             // lblCurrentVersion
             // 
             this.lblCurrentVersion.AutoSize = true;
             this.lblCurrentVersion.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lblCurrentVersion.Location = new System.Drawing.Point(146, 38);
+            this.lblCurrentVersion.ForeColor = System.Drawing.Color.Red;
+            this.lblCurrentVersion.Location = new System.Drawing.Point(115, 29);
             this.lblCurrentVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCurrentVersion.Name = "lblCurrentVersion";
-            this.lblCurrentVersion.Size = new System.Drawing.Size(0, 21);
+            this.lblCurrentVersion.Size = new System.Drawing.Size(142, 21);
             this.lblCurrentVersion.TabIndex = 3;
+            this.lblCurrentVersion.Text = "未识别客户端";
             // 
-            // btnSwitchVersion
+            // btnSwitchOfficialVersion
             // 
-            this.btnSwitchVersion.Location = new System.Drawing.Point(92, 131);
-            this.btnSwitchVersion.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSwitchVersion.Name = "btnSwitchVersion";
-            this.btnSwitchVersion.Size = new System.Drawing.Size(228, 45);
-            this.btnSwitchVersion.TabIndex = 2;
-            this.btnSwitchVersion.Text = "切换版本";
-            this.btnSwitchVersion.UseVisualStyleBackColor = true;
-            this.btnSwitchVersion.Click += new System.EventHandler(this.btnSwitchVersion_Click);
+            this.btnSwitchOfficialVersion.Location = new System.Drawing.Point(248, 78);
+            this.btnSwitchOfficialVersion.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSwitchOfficialVersion.Name = "btnSwitchOfficialVersion";
+            this.btnSwitchOfficialVersion.Size = new System.Drawing.Size(228, 45);
+            this.btnSwitchOfficialVersion.TabIndex = 2;
+            this.btnSwitchOfficialVersion.Text = "切换到官方端";
+            this.btnSwitchOfficialVersion.UseVisualStyleBackColor = true;
+            this.btnSwitchOfficialVersion.Click += new System.EventHandler(this.btnSwitchOfficialVersion_Click);
             // 
             // btnLaunchCurrent
             // 
-            this.btnLaunchCurrent.Location = new System.Drawing.Point(92, 78);
+            this.btnLaunchCurrent.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnLaunchCurrent.Location = new System.Drawing.Point(12, 78);
             this.btnLaunchCurrent.Margin = new System.Windows.Forms.Padding(4);
             this.btnLaunchCurrent.Name = "btnLaunchCurrent";
             this.btnLaunchCurrent.Size = new System.Drawing.Size(228, 45);
             this.btnLaunchCurrent.TabIndex = 1;
-            this.btnLaunchCurrent.Text = "启动当前版本";
+            this.btnLaunchCurrent.Text = "启动当前客户端";
             this.btnLaunchCurrent.UseVisualStyleBackColor = true;
             this.btnLaunchCurrent.Click += new System.EventHandler(this.btnLaunchCurrent_Click);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 40);
+            this.label4.Location = new System.Drawing.Point(9, 32);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(98, 18);
             this.label4.TabIndex = 0;
             this.label4.Text = "当前版本：";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.Color.DimGray;
+            this.label5.Location = new System.Drawing.Point(25, 537);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(278, 18);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "版本号变化后记得备份当前客户端";
+            // 
+            // linkLabelGitee
+            // 
+            this.linkLabelGitee.AutoSize = true;
+            this.linkLabelGitee.Location = new System.Drawing.Point(950, 537);
+            this.linkLabelGitee.Name = "linkLabelGitee";
+            this.linkLabelGitee.Size = new System.Drawing.Size(80, 18);
+            this.linkLabelGitee.TabIndex = 7;
+            this.linkLabelGitee.TabStop = true;
+            this.linkLabelGitee.Text = "项目主页";
+            this.linkLabelGitee.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelGitee_LinkClicked);
             // 
             // openFileDialog1
             // 
@@ -317,7 +433,7 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 536);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 566);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
             this.statusStrip1.Size = new System.Drawing.Size(1050, 22);
@@ -368,7 +484,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(1014, 88);
+            this.groupBox1.Size = new System.Drawing.Size(1014, 81);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "游戏文件夹设置(Wuthering Waves Game)";
@@ -386,7 +502,7 @@
             // 
             // btnScreenShot
             // 
-            this.btnScreenShot.Location = new System.Drawing.Point(18, 282);
+            this.btnScreenShot.Location = new System.Drawing.Point(18, 287);
             this.btnScreenShot.Margin = new System.Windows.Forms.Padding(4);
             this.btnScreenShot.Name = "btnScreenShot";
             this.btnScreenShot.Size = new System.Drawing.Size(138, 34);
@@ -397,7 +513,7 @@
             // 
             // btnReadme
             // 
-            this.btnReadme.Location = new System.Drawing.Point(164, 282);
+            this.btnReadme.Location = new System.Drawing.Point(164, 287);
             this.btnReadme.Margin = new System.Windows.Forms.Padding(4);
             this.btnReadme.Name = "btnReadme";
             this.btnReadme.Size = new System.Drawing.Size(138, 34);
@@ -410,11 +526,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1050, 558);
+            this.ClientSize = new System.Drawing.Size(1050, 588);
             this.Controls.Add(this.btnReadme);
             this.Controls.Add(this.btnScreenShot);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.linkLabelGitee);
             this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.btnSaveConfig);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -423,7 +541,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "鸣潮官服B服切换器1.0.0";
+            this.Text = "鸣潮官服B服WeGame切换器1.1.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -444,7 +562,7 @@
         private System.Windows.Forms.TextBox txtGameFolderPath;
         private System.Windows.Forms.Button btnBrowseGameFolder;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnBackupSwitchVersion;
+        private System.Windows.Forms.Button btnBackupSwitchOfficialVersion;
         private System.Windows.Forms.CheckBox checkBox_isAutoClose;
         private System.Windows.Forms.Button btnScreenShot;
         private System.Windows.Forms.Button btnReadme;
@@ -454,6 +572,15 @@
         private System.Windows.Forms.Button btnLaunchOfficial;
         private System.Windows.Forms.LinkLabel linkLabelGitee;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnBackupSwitchWegameVersion;
+        private System.Windows.Forms.Button btnSwitchWegameVersion;
+        private System.Windows.Forms.Button btnBackupSwitchBilibiliVersion;
+        private System.Windows.Forms.Button btnSwitchBilibiliVersion;
+        private System.Windows.Forms.Button btnLaunchWeGame;
+        private System.Windows.Forms.Button btnBrowseWeGame;
+        private System.Windows.Forms.TextBox txtWeGamePath;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnCheckGame;
     }
 }
 

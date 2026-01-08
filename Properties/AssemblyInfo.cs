@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("鸣潮官服B服转换器")]
-[assembly: AssemblyDescription("鸣潮官服B服转换器")]
+[assembly: AssemblyTitle("鸣潮官服B服WeGame切换器")]
+[assembly: AssemblyDescription("鸣潮官服B服WeGame切换器")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("WuWaSwitcher")]
@@ -30,6 +30,6 @@ using System.Runtime.InteropServices;
 //      生成号
 //      修订号
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: NeutralResourcesLanguage("")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: NeutralResourcesLanguage("zh-Hans")]
