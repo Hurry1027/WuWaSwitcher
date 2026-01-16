@@ -124,5 +124,13 @@ namespace WuWaSwitcher {
                 MessageBox.Show("无法打开链接: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private async void btnCheckUpdate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            btnCheckUpdate.Enabled = false;
+            CheckForUpdate(true);
+            await Task.Delay(3000);
+            //只能调用一次，防止触发频率限制
+            //btnCheckUpdate.Enabled = true;
+        }
     }
 }

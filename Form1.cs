@@ -75,6 +75,7 @@ namespace WuWaSwitcher {
             await Task.Run(() => {
                 LoadConfig();
                 CheckCurrentVersion();
+                CheckForUpdate();
             });
         }
 
@@ -120,6 +121,11 @@ namespace WuWaSwitcher {
                     }
                     else { 
                         config.configVersion = "1.0.0"; 
+                    }
+
+                    // 加载忽略版本号配置
+                    if (data.ContainsKey("ignoredVersion") && data["ignoredVersion"] != null) {
+                        config.ignoredVersion = data["ignoredVersion"].ToString();
                     }
 
                     txtGameFolderPath.Text = config.gameFolderPath;
@@ -177,6 +183,7 @@ namespace WuWaSwitcher {
                     ["configVersion"] = config.configVersion,
                     ["gameFolderPath"] = config.gameFolderPath,
                     ["isAutoCloseSwitcher"] = config.isAutoCloseSwitcher,
+                    ["ignoredVersion"] = config.ignoredVersion,
                     ["client_launch_paths"] = new Dictionary<string, object> {
                         ["Bilibili"] = config.client_launch_paths.Bilibili,
                         ["Official"] = config.client_launch_paths.Official,
@@ -638,8 +645,11 @@ namespace WuWaSwitcher {
         public string[] directoriesToBackup { get; set; }
         [DataMember]
         public string[] filesToBackup { get; set; }
+        [DataMember]
+        public string ignoredVersion { get; set; }
         public Config() {
             configVersion = "1.2.0";
+            ignoredVersion = "";
             client_launch_paths = new ClientPaths();
             directoriesToBackup = new string[] { 
                 "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland",

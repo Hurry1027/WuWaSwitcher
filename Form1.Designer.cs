@@ -87,6 +87,7 @@
             this.btnOpenGameFolder = new System.Windows.Forms.Button();
             this.btnScreenShot = new System.Windows.Forms.Button();
             this.btnReadme = new System.Windows.Forms.Button();
+            this.btnCheckUpdate = new System.Windows.Forms.LinkLabel();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -272,12 +273,12 @@
             // 
             // btnCheckGame
             // 
-            this.btnCheckGame.Location = new System.Drawing.Point(704, 24);
+            this.btnCheckGame.Location = new System.Drawing.Point(662, 24);
             this.btnCheckGame.Margin = new System.Windows.Forms.Padding(4);
             this.btnCheckGame.Name = "btnCheckGame";
-            this.btnCheckGame.Size = new System.Drawing.Size(102, 34);
+            this.btnCheckGame.Size = new System.Drawing.Size(144, 34);
             this.btnCheckGame.TabIndex = 8;
-            this.btnCheckGame.Text = "检查版本";
+            this.btnCheckGame.Text = "检查客户端版本";
             this.btnCheckGame.UseVisualStyleBackColor = true;
             this.btnCheckGame.Click += new System.EventHandler(this.btnCheckGame_Click);
             // 
@@ -407,16 +408,16 @@
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.Color.DimGray;
-            this.label5.Location = new System.Drawing.Point(25, 537);
+            this.label5.Location = new System.Drawing.Point(25, 530);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(278, 18);
+            this.label5.Size = new System.Drawing.Size(512, 18);
             this.label5.TabIndex = 8;
-            this.label5.Text = "版本号变化后记得备份当前客户端";
+            this.label5.Text = "版本号变化后记得备份当前客户端, 最新使用说明请看项目主页";
             // 
             // linkLabelGitee
             // 
             this.linkLabelGitee.AutoSize = true;
-            this.linkLabelGitee.Location = new System.Drawing.Point(950, 537);
+            this.linkLabelGitee.Location = new System.Drawing.Point(950, 530);
             this.linkLabelGitee.Name = "linkLabelGitee";
             this.linkLabelGitee.Size = new System.Drawing.Size(80, 18);
             this.linkLabelGitee.TabIndex = 7;
@@ -433,7 +434,7 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 566);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 558);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
             this.statusStrip1.Size = new System.Drawing.Size(1050, 22);
@@ -522,11 +523,23 @@
             this.btnReadme.UseVisualStyleBackColor = true;
             this.btnReadme.Click += new System.EventHandler(this.btnReadme_Click);
             // 
+            // btnCheckUpdate
+            // 
+            this.btnCheckUpdate.AutoSize = true;
+            this.btnCheckUpdate.Location = new System.Drawing.Point(864, 530);
+            this.btnCheckUpdate.Name = "btnCheckUpdate";
+            this.btnCheckUpdate.Size = new System.Drawing.Size(80, 18);
+            this.btnCheckUpdate.TabIndex = 9;
+            this.btnCheckUpdate.TabStop = true;
+            this.btnCheckUpdate.Text = "检查更新";
+            this.btnCheckUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.btnCheckUpdate_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1050, 588);
+            this.ClientSize = new System.Drawing.Size(1050, 580);
+            this.Controls.Add(this.btnCheckUpdate);
             this.Controls.Add(this.btnReadme);
             this.Controls.Add(this.btnScreenShot);
             this.Controls.Add(this.statusStrip1);
@@ -581,6 +594,7 @@
         private System.Windows.Forms.TextBox txtWeGamePath;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnCheckGame;
+        private System.Windows.Forms.LinkLabel btnCheckUpdate;
     }
 }
 

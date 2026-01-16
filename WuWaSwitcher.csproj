@@ -113,6 +113,9 @@
     <Compile Include="Code\ConfigUpdater.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Code\UpdateChecker.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
