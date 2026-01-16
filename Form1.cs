@@ -101,7 +101,7 @@ namespace WuWaSwitcher {
                     // 加载备份目录配置
                     if (data.ContainsKey("directoriesToBackup")) {
                         var dirsData = data["directoriesToBackup"] as System.Collections.ArrayList;
-                        if (dirsData != null && dirsData.Count > 0) {
+                        if (dirsData != null) {
                             config.directoriesToBackup = dirsData.Cast<string>().ToArray();
                         }
                     }
@@ -109,9 +109,17 @@ namespace WuWaSwitcher {
                     // 加载备份文件配置
                     if (data.ContainsKey("filesToBackup")) {
                         var filesData = data["filesToBackup"] as System.Collections.ArrayList;
-                        if (filesData != null && filesData.Count > 0) {
+                        if (filesData != null) {
                             config.filesToBackup = filesData.Cast<string>().ToArray();
                         }
+                    }
+
+                    // 加载配置版本
+                    if (data.ContainsKey("configVersion") && data["configVersion"] != null) {
+                        config.configVersion = data["configVersion"].ToString();
+                    }
+                    else { 
+                        config.configVersion = "1.0.0"; 
                     }
 
                     txtGameFolderPath.Text = config.gameFolderPath;
@@ -120,6 +128,9 @@ namespace WuWaSwitcher {
                     txtWeGamePath.Text = config.client_launch_paths.WeGame;
                     checkBox_isAutoClose.Checked = config.isAutoCloseSwitcher;
                     toolStripStatusLabel1.Text = "配置已加载";
+
+                    // 检查并更新配置
+                    UpdateConfigToLatestVersion(config);
                 }
                 catch (Exception ex) {
                     MessageBox.Show("加载配置文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -131,28 +142,39 @@ namespace WuWaSwitcher {
                     config.client_launch_paths.Bilibili = "";
                     config.client_launch_paths.Official = "";
                     config.client_launch_paths.WeGame = "";
+                    config.isAutoCloseSwitcher = false;
+                    txtGameFolderPath.Text = config.gameFolderPath;
+                    txtBilibiliPath.Text = config.client_launch_paths.Bilibili;
+                    txtOfficialPath.Text = config.client_launch_paths.Official;
+                    txtWeGamePath.Text = config.client_launch_paths.WeGame;
+                    checkBox_isAutoClose.Checked = config.isAutoCloseSwitcher;
                 }
-            }
-            else {
-                // 默认配置
+            } else {
+                // 如果配置文件不存在，使用默认配置
                 config = new Config();
                 config.gameFolderPath = "";
                 config.client_launch_paths.Bilibili = "";
                 config.client_launch_paths.Official = "";
                 config.client_launch_paths.WeGame = "";
-                toolStripStatusLabel1.Text = "未找到配置文件，使用默认配置";
+                config.isAutoCloseSwitcher = false;
+                txtGameFolderPath.Text = config.gameFolderPath;
+                txtBilibiliPath.Text = config.client_launch_paths.Bilibili;
+                txtOfficialPath.Text = config.client_launch_paths.Official;
+                txtWeGamePath.Text = config.client_launch_paths.WeGame;
+                checkBox_isAutoClose.Checked = config.isAutoCloseSwitcher;
             }
         }
 
-        private void SaveConfig() {
+        private bool SaveConfig() {
             try {
-                if (!CheckGameFolder()) { return; }
-                if (txtBilibiliPath.Text != "" && !CheckBilibiliLauncher()) { return; }
-                if (txtOfficialPath.Text != "" && !CheckOfficialLauncher()) { return; }
-                if (txtWeGamePath.Text != "" && !CheckWeGameLauncher()) { return; }
+                if (!CheckGameFolder()) { return false; }
+                if (txtBilibiliPath.Text != "" && !CheckBilibiliLauncher()) { return false; }
+                if (txtOfficialPath.Text != "" && !CheckOfficialLauncher()) { return false; }
+                if (txtWeGamePath.Text != "" && !CheckWeGameLauncher()) { return false; }
                 _ = Task.Run(async () => await CooldownButton(btnSaveConfig, 3));
                 System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
                 var data = new Dictionary<string, object> {
+                    ["configVersion"] = config.configVersion,
                     ["gameFolderPath"] = config.gameFolderPath,
                     ["isAutoCloseSwitcher"] = config.isAutoCloseSwitcher,
                     ["client_launch_paths"] = new Dictionary<string, object> {
@@ -167,14 +189,14 @@ namespace WuWaSwitcher {
                 string json = serializer.Serialize(data);
                 File.WriteAllText(configPath, FormatJson(json,4), new UTF8Encoding(false));
                 toolStripStatusLabel1.Text = "当前配置已保存到 config.json";
-                MessageBox.Show("当前配置已保存", "成功", MessageBoxButtons.OK, MessageBoxIcon.None);
-
                 // 保存配置后重新检查当前版本
                 CheckCurrentVersion();
+                return true;
             }
             catch (Exception ex) {
                 MessageBox.Show("保存配置文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 toolStripStatusLabel1.Text = "保存配置失败";
+                return false;
             }
         }
 
@@ -347,7 +369,7 @@ namespace WuWaSwitcher {
 
         private void SwitchVersion(ClientType aimClientType, bool isBackup) {
             if (!CheckGameFolder()) { return; }
-            bool isCheckCurrentVersion = CheckCurrentVersion();
+            bool isCheckCurrentVersion = CheckCurrentVersion(); // 如果未识别则不进行版本判断及备份
             if (currentClientType == aimClientType) {
                 toolStripStatusLabel1.Text = $"已切换到 {aimClientType} 版本";
                 return;
@@ -469,34 +491,34 @@ namespace WuWaSwitcher {
             string targetKrsdkConfigPath = Path.Combine(targetPath, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
             
             // 版本号检测
-            if (isCheckCurrentVersion) {
-                toolStripStatusLabel1.Text = "正在检查版本是否落后..";
-                bool isKRsdkVersionChange = false;
-                if (File.Exists(targetKrsdkConfigPath)) {
-                    string json = File.ReadAllText(targetKrsdkConfigPath, Encoding.UTF8);
-                    var krsdkConfig = ParseKRSDKConfig(json);
-                    isKRsdkVersionChange = new Version(krsdkConfig.KR_GameVersion) < new Version(currentSdkVersion);
-                    if (isKRsdkVersionChange) {
-                        DialogResult result = MessageBox.Show($"目标版本({aimClientType})版本号较旧: {krsdkConfig.KR_GameVersion}\n 当前版本号: {currentSdkVersion}\n修改目标版本号后可能不用重新修复游戏\n是否修改目标版本号并备份当前版本（推荐修改）?", "版本更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                        if (result == DialogResult.Yes) {
-                            try {
-                                System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-                                var data = serializer.Deserialize<Dictionary<string, object>>(json);
-                                data["KR_GameVersion"] = currentSdkVersion;
-                                string updatedJson = serializer.Serialize(data);
-                                updatedJson = FormatJson(updatedJson, 2);
-                                File.WriteAllText(targetKrsdkConfigPath, updatedJson, new UTF8Encoding(false));
-                                toolStripStatusLabel1.Text = $"已更新 {aimClientType} 版本号为: {currentSdkVersion}";
-                                isBackup = true;
-                            }
-                            catch (Exception ex) {
-                                MessageBox.Show("修改版本号失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
+            //if (isCheckCurrentVersion) {
+            //    toolStripStatusLabel1.Text = "正在检查版本是否落后..";
+            //    bool isKRsdkVersionChange = false;
+            //    if (File.Exists(targetKrsdkConfigPath)) {
+            //        string json = File.ReadAllText(targetKrsdkConfigPath, Encoding.UTF8);
+            //        var krsdkConfig = ParseKRSDKConfig(json);
+            //        isKRsdkVersionChange = new Version(krsdkConfig.KR_GameVersion) < new Version(currentSdkVersion);
+            //        if (isKRsdkVersionChange) {
+            //            DialogResult result = MessageBox.Show($"目标版本({aimClientType})版本号较旧: {krsdkConfig.KR_GameVersion}\n 当前版本号: {currentSdkVersion}\n修改目标版本号后可能不用重新修复游戏\n是否修改目标版本号并备份当前版本（推荐修改）?", "版本更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            //            if (result == DialogResult.Yes) {
+            //                try {
+            //                    System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            //                    var data = serializer.Deserialize<Dictionary<string, object>>(json);
+            //                    data["KR_GameVersion"] = currentSdkVersion;
+            //                    string updatedJson = serializer.Serialize(data);
+            //                    updatedJson = FormatJson(updatedJson, 2);
+            //                    File.WriteAllText(targetKrsdkConfigPath, updatedJson, new UTF8Encoding(false));
+            //                    toolStripStatusLabel1.Text = $"已更新 {aimClientType} 版本号为: {currentSdkVersion}";
+            //                    isBackup = true;
+            //                }
+            //                catch (Exception ex) {
+            //                    MessageBox.Show("修改版本号失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //                    return;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             
 
             try {
@@ -605,6 +627,8 @@ namespace WuWaSwitcher {
     [DataContract]
     public class Config {
         [DataMember]
+        public string configVersion { get; set; }
+        [DataMember]
         public string gameFolderPath { get; set; }
         [DataMember]
         public ClientPaths client_launch_paths { get; set; }
@@ -615,6 +639,7 @@ namespace WuWaSwitcher {
         [DataMember]
         public string[] filesToBackup { get; set; }
         public Config() {
+            configVersion = "1.2.0";
             client_launch_paths = new ClientPaths();
             directoriesToBackup = new string[] { 
                 "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland",
@@ -623,8 +648,8 @@ namespace WuWaSwitcher {
             };
             filesToBackup = new string[] {
                 //"ClearThirdParty.exe",
-                "launcherDownloadConfig.json",
-                "LocalGameResources.json",
+                //"launcherDownloadConfig.json",
+                //"LocalGameResources.json",
                 //"Wuthering Waves.exe"
             };
         }

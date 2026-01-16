@@ -9,7 +9,9 @@ using System.Windows.Forms;
 namespace WuWaSwitcher {
     public partial class Form1 {
         private void btnSaveConfig_Click(object sender, EventArgs e) {
-            SaveConfig();
+            if (SaveConfig()) {
+                MessageBox.Show("当前配置已保存", "成功", MessageBoxButtons.OK, MessageBoxIcon.None);
+            }
         }
 
         private void btnCheckGame_Click(object sender, EventArgs e) {
@@ -46,12 +48,9 @@ namespace WuWaSwitcher {
         }
 
         private void btnOpenGameFolder_Click(object sender, EventArgs e) {
+            if (!CheckGameFolder()) { return; }
             try {
                 string gameFolderPath = txtGameFolderPath.Text;
-                if (string.IsNullOrEmpty(gameFolderPath) || !gameFolderPath.EndsWith("Wuthering Waves Game") || !Directory.Exists(gameFolderPath)) {
-                    MessageBox.Show("请先设置正确的游戏文件夹路径", "提示", MessageBoxButtons.OK, MessageBoxIcon.None);
-                    return;
-                }
                 Process.Start("explorer.exe", gameFolderPath);
                 toolStripStatusLabel1.Text = "已打开游戏文件夹";
             }
