@@ -60,6 +60,7 @@ namespace WuWaSwitcher {
         private string configPath = "config.json";
         private ClientType currentClientType = ClientType.Null;
         private string currentSdkVersion = "";
+        private string currentGameVersion = "";
         // private string aimVersion;
         // private string aimVersionName;
         
@@ -287,14 +288,24 @@ namespace WuWaSwitcher {
         private bool CheckCurrentVersion() {
             try {
                 string krsdkConfigPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
+                string launcherDownloadConfigPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig.json");
                 if (!File.Exists(krsdkConfigPath)) {
-                    lblCurrentVersion.Text = "未识别客户端";
+                    lblCurrentVersion.Text = "未识别客户端(SDK版本识别失败)";
+                    lblCurrentVersion.ForeColor = Color.Red;
+                    //SetDynamicIcon(Assembly.GetExecutingAssembly().Location);
+                    return false;
+                }
+                if (!File.Exists(launcherDownloadConfigPath)) {
+                    lblCurrentVersion.Text = "未识别客户端(包体版本识别失败)";
                     lblCurrentVersion.ForeColor = Color.Red;
                     //SetDynamicIcon(Assembly.GetExecutingAssembly().Location);
                     return false;
                 }
                 string json = File.ReadAllText(krsdkConfigPath, Encoding.UTF8);
+                string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
                 var krsdkConfig = ParseKRSDKConfig(json);
+                var launcherConfig = ParseLauncherConfig(launcherJson);
+                currentGameVersion = launcherConfig.version;
                 if (krsdkConfig.KR_ChannelId == "46") {
                     currentClientType = ClientType.Bilibili;
                     //SetDynamicIcon(txtBilibiliPath.Text);
@@ -315,12 +326,12 @@ namespace WuWaSwitcher {
                     return false;
                 }
                 currentSdkVersion = krsdkConfig.KR_GameVersion;
-                lblCurrentVersion.Text = $"{currentClientType} {currentSdkVersion}";
+                lblCurrentVersion.Text = $"{currentClientType} {currentGameVersion} (SDK:{currentSdkVersion})";
                 lblCurrentVersion.ForeColor = Color.Green;
                 return true;
             }
             catch (Exception ex) {
-                MessageBox.Show("读取KRSDK配置文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("读取KRSDK或launcherDownloadConfig配置文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 lblCurrentVersion.Text = "读取版本失败";
                 lblCurrentVersion.ForeColor = Color.Red;
                 return false;
@@ -335,6 +346,19 @@ namespace WuWaSwitcher {
                 KR_PackageName = data["KR_PackageName"]?.ToString() ?? "",
                 KR_GameVersion = data["KR_GameVersion"]?.ToString() ?? "",
                 KR_ChannelId = data["KR_ChannelId"]?.ToString() ?? ""
+            };
+        }
+
+        private LauncherConfig ParseLauncherConfig(string json) {
+            System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            var data = serializer.Deserialize<Dictionary<string, object>>(json);
+
+            return new LauncherConfig {
+                version = data["version"]?.ToString() ?? "",
+                reUseVersion = data["reUseVersion"]?.ToString() ?? "",
+                state = data["state"]?.ToString() ?? "",
+                isPreDownload = data.ContainsKey("isPreDownload") && data["isPreDownload"] is bool ? (bool)data["isPreDownload"] : false,
+                appId = data["appId"]?.ToString() ?? ""
             };
         }
 
@@ -684,7 +708,20 @@ namespace WuWaSwitcher {
         [DataMember]
         public string KR_ChannelId { get; set; }
     }
-}
+
+    public class LauncherConfig {
+        [DataMember]
+        public string version { get; set; }
+        [DataMember]
+        public string reUseVersion { get; set; }
+        [DataMember]
+        public string state { get; set; }
+        [DataMember]
+        public bool isPreDownload { get; set; }
+        [DataMember]
+        public string appId { get; set; }
+    }
+}  
 
 
 //private void btnRefreshIcon_Click(object sender, EventArgs e)

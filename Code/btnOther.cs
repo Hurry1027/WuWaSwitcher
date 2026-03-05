@@ -17,7 +17,7 @@ namespace WuWaSwitcher {
         private void btnCheckGame_Click(object sender, EventArgs e) {
             if (!CheckGameFolder()) { return; }
             CheckCurrentVersion();
-            toolStripStatusLabel1.Text = $"检查到版本: {currentClientType} {currentSdkVersion}";
+            toolStripStatusLabel1.Text = $"检查到版本: {currentClientType} {currentGameVersion} (SDK:{currentSdkVersion})";
         }
 
         private void btnBrowseGameFolder_Click(object sender, EventArgs e) {
@@ -101,18 +101,25 @@ namespace WuWaSwitcher {
 
         private void btnReadme_Click(object sender, EventArgs e) {
             try {
-                string readmePath = Path.Combine(Application.StartupPath, "README.md");
-                if (File.Exists(readmePath)) {
-                    Process.Start(readmePath);
-                    toolStripStatusLabel1.Text = "已打开README文件";
-                }
-                else {
-                    MessageBox.Show("README文件不存在\n" + readmePath, "错误", MessageBoxButtons.OK, MessageBoxIcon.None);
-                }
+                Process.Start("https://gitee.com/wn1027/wuwa-switcher");
+                toolStripStatusLabel1.Text = "已打开项目主页";
             }
             catch (Exception ex) {
-                MessageBox.Show("无法打开README文件: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("无法打开链接: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            //try {
+            //    string readmePath = Path.Combine(Application.StartupPath, "README.md");
+            //    if (File.Exists(readmePath)) {
+            //        Process.Start(readmePath);
+            //        toolStripStatusLabel1.Text = "已打开README文件";
+            //    }
+            //    else {
+            //        MessageBox.Show("README文件不存在\n" + readmePath, "错误", MessageBoxButtons.OK, MessageBoxIcon.None);
+            //    }
+            //}
+            //catch (Exception ex) {
+            //    MessageBox.Show("无法打开README文件: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         private void linkLabelGitee_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -131,6 +138,22 @@ namespace WuWaSwitcher {
             await Task.Delay(3000);
             //只能调用一次，防止触发频率限制
             //btnCheckUpdate.Enabled = true;
+        }
+
+        private void lblCurrentVersion_DoubleClick(object sender, EventArgs e) {
+            try {
+                string launcherDownloadConfigPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig.json");
+                if (File.Exists(launcherDownloadConfigPath)) {
+                    Process.Start(launcherDownloadConfigPath);
+                    toolStripStatusLabel1.Text = "已打开launcherDownloadConfig.json文件";
+                } else {
+                    MessageBox.Show("launcherDownloadConfig.json文件不存在\n" + launcherDownloadConfigPath, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    toolStripStatusLabel1.Text = "文件不存在";
+                }
+            } catch (Exception ex) {
+                MessageBox.Show("打开文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                toolStripStatusLabel1.Text = "打开文件失败";
+            }
         }
     }
 }

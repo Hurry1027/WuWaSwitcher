@@ -370,6 +370,7 @@
             this.lblCurrentVersion.Size = new System.Drawing.Size(142, 21);
             this.lblCurrentVersion.TabIndex = 3;
             this.lblCurrentVersion.Text = "未识别客户端";
+            this.lblCurrentVersion.DoubleClick += new System.EventHandler(this.lblCurrentVersion_DoubleClick);
             // 
             // btnSwitchOfficialVersion
             // 
@@ -410,9 +411,9 @@
             this.label5.ForeColor = System.Drawing.Color.DimGray;
             this.label5.Location = new System.Drawing.Point(25, 530);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(512, 18);
+            this.label5.Size = new System.Drawing.Size(314, 18);
             this.label5.TabIndex = 8;
-            this.label5.Text = "版本号变化后记得备份当前客户端, 最新使用说明请看项目主页";
+            this.label5.Text = "版本号变化后一定记得备份当前客户端";
             // 
             // linkLabelGitee
             // 
@@ -554,7 +555,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "鸣潮官服B服WeGame切换器1.2.0";
+            this.Text = "鸣潮官服B服WeGame切换器1.2.1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
