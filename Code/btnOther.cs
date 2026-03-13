@@ -147,8 +147,8 @@ namespace WuWaSwitcher {
                     Process.Start(launcherDownloadConfigPath);
                     toolStripStatusLabel1.Text = "已打开launcherDownloadConfig.json文件";
                 } else {
-                    MessageBox.Show("launcherDownloadConfig.json文件不存在\n" + launcherDownloadConfigPath, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    toolStripStatusLabel1.Text = "文件不存在";
+                    //MessageBox.Show("launcherDownloadConfig.json文件不存在\n" + launcherDownloadConfigPath, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    toolStripStatusLabel1.Text = "launcherDownloadConfig.json文件不存在";
                 }
             } catch (Exception ex) {
                 MessageBox.Show("打开文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);

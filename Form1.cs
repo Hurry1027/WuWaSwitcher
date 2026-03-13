@@ -59,8 +59,8 @@ namespace WuWaSwitcher {
         private Config config;
         private string configPath = "config.json";
         private ClientType currentClientType = ClientType.Null;
-        private string currentSdkVersion = "";
-        private string currentGameVersion = "";
+        private string currentSdkVersion = "未知";
+        private string currentGameVersion = "未知";
         // private string aimVersion;
         // private string aimVersionName;
         
@@ -295,17 +295,15 @@ namespace WuWaSwitcher {
                     //SetDynamicIcon(Assembly.GetExecutingAssembly().Location);
                     return false;
                 }
-                if (!File.Exists(launcherDownloadConfigPath)) {
-                    lblCurrentVersion.Text = "未识别客户端(包体版本识别失败)";
-                    lblCurrentVersion.ForeColor = Color.Red;
-                    //SetDynamicIcon(Assembly.GetExecutingAssembly().Location);
-                    return false;
+                if (File.Exists(launcherDownloadConfigPath)) {
+                    string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
+                    var launcherConfig = ParseLauncherConfig(launcherJson);
+                    currentGameVersion = launcherConfig.version;
+                }else{
+                    currentGameVersion = "未知";
                 }
                 string json = File.ReadAllText(krsdkConfigPath, Encoding.UTF8);
-                string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
                 var krsdkConfig = ParseKRSDKConfig(json);
-                var launcherConfig = ParseLauncherConfig(launcherJson);
-                currentGameVersion = launcherConfig.version;
                 if (krsdkConfig.KR_ChannelId == "46") {
                     currentClientType = ClientType.Bilibili;
                     //SetDynamicIcon(txtBilibiliPath.Text);
