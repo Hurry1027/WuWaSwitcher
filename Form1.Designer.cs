@@ -74,7 +74,6 @@
             this.btnSwitchOfficialVersion = new System.Windows.Forms.Button();
             this.btnLaunchCurrent = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.linkLabelGitee = new System.Windows.Forms.LinkLabel();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -88,6 +87,9 @@
             this.btnScreenShot = new System.Windows.Forms.Button();
             this.btnReadme = new System.Windows.Forms.Button();
             this.btnCheckUpdate = new System.Windows.Forms.LinkLabel();
+            this.btnKrSdkDir = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.linkMklinkState = new System.Windows.Forms.LinkLabel();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -119,7 +121,7 @@
             // 
             // btnLaunchWeGame
             // 
-            this.btnLaunchWeGame.Location = new System.Drawing.Point(900, 117);
+            this.btnLaunchWeGame.Location = new System.Drawing.Point(902, 117);
             this.btnLaunchWeGame.Margin = new System.Windows.Forms.Padding(4);
             this.btnLaunchWeGame.Name = "btnLaunchWeGame";
             this.btnLaunchWeGame.Size = new System.Drawing.Size(104, 34);
@@ -239,10 +241,10 @@
             // 
             // btnSaveConfig
             // 
-            this.btnSaveConfig.Location = new System.Drawing.Point(918, 287);
+            this.btnSaveConfig.Location = new System.Drawing.Point(920, 287);
             this.btnSaveConfig.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveConfig.Name = "btnSaveConfig";
-            this.btnSaveConfig.Size = new System.Drawing.Size(102, 34);
+            this.btnSaveConfig.Size = new System.Drawing.Size(104, 34);
             this.btnSaveConfig.TabIndex = 2;
             this.btnSaveConfig.Text = "保存配置";
             this.btnSaveConfig.UseVisualStyleBackColor = true;
@@ -405,16 +407,6 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "当前版本：";
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.ForeColor = System.Drawing.Color.DimGray;
-            this.label5.Location = new System.Drawing.Point(25, 530);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(314, 18);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "版本号变化后一定记得备份当前客户端";
-            // 
             // linkLabelGitee
             // 
             this.linkLabelGitee.AutoSize = true;
@@ -509,13 +501,13 @@
             this.btnScreenShot.Name = "btnScreenShot";
             this.btnScreenShot.Size = new System.Drawing.Size(138, 34);
             this.btnScreenShot.TabIndex = 5;
-            this.btnScreenShot.Text = "截图文件夹";
+            this.btnScreenShot.Text = "截图目录";
             this.btnScreenShot.UseVisualStyleBackColor = true;
             this.btnScreenShot.Click += new System.EventHandler(this.btnScreenShot_Click);
             // 
             // btnReadme
             // 
-            this.btnReadme.Location = new System.Drawing.Point(164, 287);
+            this.btnReadme.Location = new System.Drawing.Point(310, 287);
             this.btnReadme.Margin = new System.Windows.Forms.Padding(4);
             this.btnReadme.Name = "btnReadme";
             this.btnReadme.Size = new System.Drawing.Size(138, 34);
@@ -527,7 +519,7 @@
             // btnCheckUpdate
             // 
             this.btnCheckUpdate.AutoSize = true;
-            this.btnCheckUpdate.Location = new System.Drawing.Point(864, 530);
+            this.btnCheckUpdate.Location = new System.Drawing.Point(864, 528);
             this.btnCheckUpdate.Name = "btnCheckUpdate";
             this.btnCheckUpdate.Size = new System.Drawing.Size(80, 18);
             this.btnCheckUpdate.TabIndex = 9;
@@ -535,11 +527,46 @@
             this.btnCheckUpdate.Text = "检查更新";
             this.btnCheckUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.btnCheckUpdate_LinkClicked);
             // 
+            // btnKrSdkDir
+            // 
+            this.btnKrSdkDir.Location = new System.Drawing.Point(164, 287);
+            this.btnKrSdkDir.Margin = new System.Windows.Forms.Padding(4);
+            this.btnKrSdkDir.Name = "btnKrSdkDir";
+            this.btnKrSdkDir.Size = new System.Drawing.Size(138, 34);
+            this.btnKrSdkDir.TabIndex = 10;
+            this.btnKrSdkDir.Text = "KrPcSdk目录";
+            this.btnKrSdkDir.UseVisualStyleBackColor = true;
+            this.btnKrSdkDir.Click += new System.EventHandler(this.btnkrSdkDir_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.Color.DimGray;
+            this.label5.Location = new System.Drawing.Point(15, 530);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(350, 18);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "一般情况首次使用切换器才需要备份客户端";
+            // 
+            // linkMklinkState
+            // 
+            this.linkMklinkState.AutoSize = true;
+            this.linkMklinkState.LinkColor = System.Drawing.Color.Firebrick;
+            this.linkMklinkState.Location = new System.Drawing.Point(675, 530);
+            this.linkMklinkState.Name = "linkMklinkState";
+            this.linkMklinkState.Size = new System.Drawing.Size(170, 18);
+            this.linkMklinkState.TabIndex = 11;
+            this.linkMklinkState.TabStop = true;
+            this.linkMklinkState.Text = "版本文件夹链接状态";
+            this.linkMklinkState.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkMklinkState_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1050, 580);
+            this.Controls.Add(this.linkMklinkState);
+            this.Controls.Add(this.btnKrSdkDir);
             this.Controls.Add(this.btnCheckUpdate);
             this.Controls.Add(this.btnReadme);
             this.Controls.Add(this.btnScreenShot);
@@ -555,7 +582,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "鸣潮官服B服WeGame切换器1.2.2";
+            this.Text = "鸣潮官服B服WeGame切换器1.3.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -576,7 +603,6 @@
         private System.Windows.Forms.TextBox txtGameFolderPath;
         private System.Windows.Forms.Button btnBrowseGameFolder;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnBackupSwitchOfficialVersion;
         private System.Windows.Forms.CheckBox checkBox_isAutoClose;
         private System.Windows.Forms.Button btnScreenShot;
         private System.Windows.Forms.Button btnReadme;
@@ -585,10 +611,7 @@
         private System.Windows.Forms.Button btnLaunchBilibili;
         private System.Windows.Forms.Button btnLaunchOfficial;
         private System.Windows.Forms.LinkLabel linkLabelGitee;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btnBackupSwitchWegameVersion;
         private System.Windows.Forms.Button btnSwitchWegameVersion;
-        private System.Windows.Forms.Button btnBackupSwitchBilibiliVersion;
         private System.Windows.Forms.Button btnSwitchBilibiliVersion;
         private System.Windows.Forms.Button btnLaunchWeGame;
         private System.Windows.Forms.Button btnBrowseWeGame;
@@ -596,6 +619,12 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnCheckGame;
         private System.Windows.Forms.LinkLabel btnCheckUpdate;
+        private System.Windows.Forms.Button btnKrSdkDir;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnBackupSwitchBilibiliVersion;
+        private System.Windows.Forms.Button btnBackupSwitchWegameVersion;
+        private System.Windows.Forms.Button btnBackupSwitchOfficialVersion;
+        private System.Windows.Forms.LinkLabel linkMklinkState;
     }
 }
 

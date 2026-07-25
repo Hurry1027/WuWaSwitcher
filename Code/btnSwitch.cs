@@ -19,7 +19,7 @@ namespace WuWaSwitcher {
 
         private void btnSwitchOfficialVersion_Click(object sender, EventArgs e) {
             if (!CheckGameFolder()) { return; }
-            DialogResult result = MessageBox.Show($"确认要切换到 {ClientType.Official} 版本吗？(不备份当前版本)\n当前版本：{currentClientType}", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show($"确认要切换到 {ClientType.Official} 版本吗？\n当前版本：{currentClientType}", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) {
                 _ = Task.Run(async () => await CooldownButton(btnSwitchOfficialVersion, 3));
                 SwitchVersion(ClientType.Official, false);
@@ -37,7 +37,7 @@ namespace WuWaSwitcher {
 
         private void btnSwitchBilibiliVersion_Click(object sender, EventArgs e) {
             if (!CheckGameFolder()) { return; }
-            DialogResult result = MessageBox.Show($"确认要切换到 {ClientType.Bilibili} 版本吗？(不备份当前版本)\n当前版本：{currentClientType}", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show($"确认要切换到 {ClientType.Bilibili} 版本吗？\n当前版本：{currentClientType}", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) {
                 _ = Task.Run(async () => await CooldownButton(btnSwitchBilibiliVersion, 3));
                 SwitchVersion(ClientType.Bilibili, false);
@@ -55,7 +55,7 @@ namespace WuWaSwitcher {
 
         private void btnSwitchWegameVersion_Click(object sender, EventArgs e) {
             if (!CheckGameFolder()) { return; }
-            DialogResult result = MessageBox.Show($"确认要切换到 {ClientType.WeGame} 版本吗？(不备份当前版本)\n当前版本：{currentClientType}", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show($"确认要切换到 {ClientType.WeGame} 版本吗？\n当前版本：{currentClientType}", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) {
                 _ = Task.Run(async () => await CooldownButton(btnSwitchWegameVersion, 3));
                 SwitchVersion(ClientType.WeGame, false);

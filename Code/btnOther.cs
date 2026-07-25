@@ -99,6 +99,27 @@ namespace WuWaSwitcher {
             }
         }
 
+        private void btnkrSdkDir_Click(object sender, EventArgs e) {
+            try {
+                string gameFolderPath = txtGameFolderPath.Text;
+                if (string.IsNullOrEmpty(gameFolderPath)) {
+                    MessageBox.Show("请先设置游戏文件夹路径", "提示", MessageBoxButtons.OK, MessageBoxIcon.None);
+                    return;
+                }
+                string krSdkPath = Path.Combine(gameFolderPath, "Client\\Binaries\\Win64\\ThirdParty");
+                if (!Directory.Exists(krSdkPath)) {
+                    MessageBox.Show("KrPcSdk目录不存在\n" + krSdkPath, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                Process.Start("explorer.exe", krSdkPath);
+                toolStripStatusLabel1.Text = "已打开KrPcSdk目录";
+            }
+            catch (Exception ex) {
+                MessageBox.Show("打开KrPcSdk目录失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                toolStripStatusLabel1.Text = "打开目录失败";
+            }
+        }
+
         private void btnReadme_Click(object sender, EventArgs e) {
             try {
                 Process.Start("https://gitee.com/wn1027/wuwa-switcher");
@@ -129,6 +150,42 @@ namespace WuWaSwitcher {
             }
             catch (Exception ex) {
                 MessageBox.Show("无法打开链接: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void linkMklinkState_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            string krsdkPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+            if (!IsSymlink(krsdkPath)) {
+                MessageBox.Show($"用途：切换器将该KrPcSdk_Mainland目录转为符号链接形式，以便在不移动文件的情况下切换游戏版本\n具体路径: Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+                return;
+            }
+            DialogResult result = MessageBox.Show($"是否取消KrPcSdk_Mainland目录的符号链接?\n用途：切换器将该普通目录转为符号链接形式，以便在不移动文件的情况下切换游戏版本\n结果：取消符号链接后恢复游戏文件到原本状态", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes) {
+                string currentBuckupKrsdkDir = Path.Combine(currentClientType, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+                if (!Directory.Exists(currentBuckupKrsdkDir)) {
+                    DialogResult result1 = MessageBox.Show($"未找到当前版本({currentClientType})的备份文件，确认取消符号链接吗？（你需要打开启动器修复文件，预计下载500MB左右）", "确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result1 == DialogResult.Yes) {
+                        if (!ExecuteCommand($"rd \"{krsdkPath}\"")) {
+                            MessageBox.Show("删除符号链接失败", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        MessageBox.Show("已取消KrPcSdk_Mainland目录的符号链接");
+                        CheckGameFolder();
+                        return;
+                    }
+                    else {
+                        return;
+                    }
+                }
+                if (!ExecuteCommand($"rd \"{krsdkPath}\"")) {
+                    MessageBox.Show("删除符号链接失败", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                if (Directory.Exists(currentBuckupKrsdkDir)) {
+                    CopyDirectory(currentBuckupKrsdkDir, krsdkPath);
+                }
+                CheckGameFolder();
+                MessageBox.Show("已取消KrPcSdk_Mainland目录的符号链接");
             }
         }
 

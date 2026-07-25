@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -8,12 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 
 namespace WuWaSwitcher {
     public readonly struct ClientType{
@@ -138,6 +134,9 @@ namespace WuWaSwitcher {
 
                     // 检查并更新配置
                     UpdateConfigToLatestVersion(config);
+
+                    // 检查游戏文件夹有效
+                    CheckGameFolder();
                 }
                 catch (Exception ex) {
                     MessageBox.Show("加载配置文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -224,9 +223,52 @@ namespace WuWaSwitcher {
                 lblCurrentVersion.ForeColor = Color.Red;
                 return false;
             }
+
+            // KrPcSdk符号链接检测
             string krsdkPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
-            if (!Directory.Exists(krsdkPath)) {
-                MessageBox.Show("游戏文件夹识别错误, 未找到KrPcSdk_Mainland文件夹", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (IsSymlink(krsdkPath)) {
+                linkMklinkState.Text = "KrPcSdk目录已链接";
+                linkMklinkState.LinkColor = Color.Green;
+
+                // 获取符号链接的目标路径
+                string linkTarget = GetSymlinkTarget(krsdkPath);
+                if (string.IsNullOrEmpty(linkTarget)) {
+                    // 无法获取链接目标，可能链接损坏
+                    MessageBox.Show("KrPcSdk_Mainland目录无法读取符号链接路径，如果版本显示与预期不一致，建议手动打开目标客户端修复游戏", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    linkMklinkState.Text = "KrPcSdk链接未知";
+                    linkMklinkState.LinkColor = Color.Red;
+                }
+                else if (linkTarget == "Failed Open Dir") {
+                    // 目标文件夹不可用，解除链接
+                    if (ExecuteCommand($"rd \"{krsdkPath}\"")) {
+                        linkMklinkState.Text = "KrPcSdk目录链接解除";
+                        linkMklinkState.LinkColor = Color.Firebrick;
+                        MessageBox.Show("KrPcSdk_Mainland目录符号链接指向的版本备份不存在，已自动解除链接\n然后你可能需要恢复备份或修复游戏(大约500MB)");
+                        return false;
+                    }
+                    else {
+                        linkMklinkState.Text = "解除链接失败";
+                        linkMklinkState.LinkColor = Color.Red;
+                        MessageBox.Show("KrPcSdk_Mainland目录指向的版本备份不存在，尝试解除链接失败。请手动删除游戏文件夹下的KrPcSdk_Mainland链接目录(图标左下角有角标)\n然后你可能需要恢复备份或修复游戏(大约500MB)");
+                        return false;
+                    }
+                } else {
+                    // 符号链接可用，检查链接路径与实际版本是否一致
+                    string linkClientType = GetSymlinkClinetType(krsdkPath);
+                    if (linkClientType == ClientType.Null) {
+                        linkMklinkState.Text = "KrPcSdk目录链接路径错误";
+                        linkMklinkState.LinkColor = Color.Red;
+                        MessageBox.Show("错误的KrPcSdk目录链接路径, 请手动删除链接: " + linkTarget + " 并恢复KrPcSdk_Mainland目录。\n如果你看到了此错误提示, 请联系开发者反馈此BUG");
+                        return false;
+                    }
+                }
+            } else {
+                linkMklinkState.Text = "版本文件夹未链接";
+                linkMklinkState.LinkColor = Color.Firebrick;
+            }
+            
+            if (!File.Exists(Path.Combine(txtGameFolderPath.Text, "Client\\Binaries\\Win64\\Client-Win64-Shipping.exe"))) {
+                MessageBox.Show("游戏文件夹识别错误, 未找到Client-Win64-Shipping.exe", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             config.gameFolderPath = txtGameFolderPath.Text;
@@ -287,7 +329,11 @@ namespace WuWaSwitcher {
 
         private bool CheckCurrentVersion() {
             try {
-                string krsdkConfigPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
+                lblCurrentVersion.Text = "未识别客户端(SDK版本识别失败)";
+                lblCurrentVersion.ForeColor = Color.Red;
+
+                string krsdkPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+                string krsdkConfigPath = Path.Combine(krsdkPath, "KRSDKRes/KRSDKConfig.json");
                 string launcherDownloadConfigPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig.json");
                 if (!File.Exists(krsdkConfigPath)) {
                     lblCurrentVersion.Text = "未识别客户端(SDK版本识别失败)";
@@ -326,6 +372,17 @@ namespace WuWaSwitcher {
                 currentSdkVersion = krsdkConfig.KR_GameVersion;
                 lblCurrentVersion.Text = $"{currentClientType} {currentGameVersion} (SDK:{currentSdkVersion})";
                 lblCurrentVersion.ForeColor = Color.Green;
+
+                // 检查链接路径是否与实际版本一致
+                if (IsSymlink(krsdkPath)) {
+                    ClientType linkClientType = GetSymlinkClinetType(krsdkPath);
+                    if (currentClientType != ClientType.Null && linkClientType != currentClientType) {
+                        // 根据链接路径最终修正意图客户端类型
+                        currentClientType = linkClientType;
+                        lblCurrentVersion.Text = $"{currentClientType} SDK缺失 | 使用启动器修复文件即可";
+                        lblCurrentVersion.ForeColor = Color.Red;
+                    }
+                }
                 return true;
             }
             catch (Exception ex) {
@@ -335,6 +392,8 @@ namespace WuWaSwitcher {
                 return false;
             }
         }
+
+
 
         private KRSDKConfig ParseKRSDKConfig(string json) {
             System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -360,56 +419,12 @@ namespace WuWaSwitcher {
             };
         }
 
-        private void LaunchCurrentGame() {
-            try {
-                if (!CheckGameFolder() || !CheckCurrentVersion()) {
-                    return;
-                }
-                string launchPath;
-                if (currentClientType == ClientType.Bilibili) {
-                    if (!CheckBilibiliLauncher()) {return;}
-                    launchPath = config.client_launch_paths.Bilibili;
-                }
-                else if (currentClientType == ClientType.Official) {
-                    if (!CheckOfficialLauncher()) {return;}
-                    launchPath = config.client_launch_paths.Official;
-                }
-                else if (currentClientType == ClientType.WeGame) {
-                    if (!CheckWeGameLauncher()) {return;}
-                    launchPath = config.client_launch_paths.WeGame;
-                }
-                else {
-                    MessageBox.Show($"未知的版本: {currentClientType}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                Process.Start(launchPath);
-                if (checkBox_isAutoClose.Checked) {
-                    toolStripStatusLabel1.Text = $"已启动 {currentClientType} 客户端, 2s后关闭切换器...";
-                    System.Threading.Tasks.Task.Delay(2500).ContinueWith(t => {
-                        this.BeginInvoke(new Action(() => this.Close()));
-                    });
-                }
-            }
-            catch (Exception ex) {
-                MessageBox.Show($"启动 {currentClientType} 失败\n" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                toolStripStatusLabel1.Text = $"启动 {currentClientType} 失败";
-            }
-        }
-
-        private void SwitchVersion(ClientType aimClientType, bool isBackup) {
-            if (!CheckGameFolder()) { return; }
-            bool isCheckCurrentVersion = CheckCurrentVersion(); // 如果未识别则不进行版本判断及备份
-            if (currentClientType == aimClientType) {
-                toolStripStatusLabel1.Text = $"已切换到 {aimClientType} 版本";
-                return;
-            }
-
-            // 检查游戏进程和启动器进程是否在运行（批量优化）
+        private bool CheckAndCloseProcesses() {
             toolStripStatusLabel1.Text = "正在关闭游戏和启动器..";
             List<ProcessCheckInfo> processesToCheck = new List<ProcessCheckInfo>();
             
             // 添加游戏进程检查
-            string gameProcessDirectory = Path.Combine(config.gameFolderPath, "Client\\Binaries\\Win64");
+            string gameProcessDirectory = Path.Combine(txtGameFolderPath.Text, "Client\\Binaries\\Win64");
             processesToCheck.Add(new ProcessCheckInfo {
                 ExecutableName = "Client-Win64-Shipping.exe",
                 Directory = gameProcessDirectory,
@@ -420,7 +435,7 @@ namespace WuWaSwitcher {
             List<string> runinglauncherDir = new List<string>();
             List<string> runningLauncherFileName = new List<string>();
             if (txtBilibiliPath.Text != "") { 
-                if (!CheckBilibiliLauncher()) { return; }
+                if (!CheckBilibiliLauncher()) { return false; }
                 processesToCheck.Add(new ProcessCheckInfo {
                     ExecutableName = "launcher_main.exe",
                     Directory = Path.GetDirectoryName(txtBilibiliPath.Text),
@@ -428,7 +443,7 @@ namespace WuWaSwitcher {
                 });
             }
             if (txtOfficialPath.Text != "") { 
-                if (!CheckOfficialLauncher()) { return; }
+                if (!CheckOfficialLauncher()) { return false; }
                 processesToCheck.Add(new ProcessCheckInfo {
                     ExecutableName = "launcher_main.exe",
                     Directory = Path.GetDirectoryName(txtOfficialPath.Text),
@@ -436,7 +451,7 @@ namespace WuWaSwitcher {
                 });
             }
             if (txtWeGamePath.Text != "") { 
-                if (!CheckWeGameLauncher()) { return; }
+                if (!CheckWeGameLauncher()) { return false; }
                 processesToCheck.Add(new ProcessCheckInfo {
                     ExecutableName = "launcher.exe",
                     Directory = Path.GetDirectoryName(txtWeGamePath.Text),
@@ -481,7 +496,7 @@ namespace WuWaSwitcher {
                 DialogResult result = MessageBox.Show(message.ToString(), "请先关闭游戏", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.No) {
                     toolStripStatusLabel1.Text = "版本切换已取消";
-                    return;
+                    return false;
                 }
                 
                 // 批量终止进程，优化性能
@@ -510,96 +525,119 @@ namespace WuWaSwitcher {
                 KillProcessesBatch(processesToKill);
                 toolStripStatusLabel1.Text = "正在结束游戏进程..";
                 System.Threading.Thread.Sleep(2500);
-                toolStripStatusLabel1.Text = $"正在切换到 {aimClientType} ..";
             }
+            return true;
+        }
 
-            // 定义变量
-            string currentPath = currentClientType;
-            string targetPath = aimClientType;
-            string krsdkPath = Path.Combine(config.gameFolderPath, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
-            string targetKrsdkConfigPath = Path.Combine(targetPath, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
-            
-            // 版本号检测
-            //if (isCheckCurrentVersion) {
-            //    toolStripStatusLabel1.Text = "正在检查版本是否落后..";
-            //    bool isKRsdkVersionChange = false;
-            //    if (File.Exists(targetKrsdkConfigPath)) {
-            //        string json = File.ReadAllText(targetKrsdkConfigPath, Encoding.UTF8);
-            //        var krsdkConfig = ParseKRSDKConfig(json);
-            //        isKRsdkVersionChange = new Version(krsdkConfig.KR_GameVersion) < new Version(currentSdkVersion);
-            //        if (isKRsdkVersionChange) {
-            //            DialogResult result = MessageBox.Show($"目标版本({aimClientType})版本号较旧: {krsdkConfig.KR_GameVersion}\n 当前版本号: {currentSdkVersion}\n修改目标版本号后可能不用重新修复游戏\n是否修改目标版本号并备份当前版本（推荐修改）?", "版本更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            //            if (result == DialogResult.Yes) {
-            //                try {
-            //                    System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-            //                    var data = serializer.Deserialize<Dictionary<string, object>>(json);
-            //                    data["KR_GameVersion"] = currentSdkVersion;
-            //                    string updatedJson = serializer.Serialize(data);
-            //                    updatedJson = FormatJson(updatedJson, 2);
-            //                    File.WriteAllText(targetKrsdkConfigPath, updatedJson, new UTF8Encoding(false));
-            //                    toolStripStatusLabel1.Text = $"已更新 {aimClientType} 版本号为: {currentSdkVersion}";
-            //                    isBackup = true;
-            //                }
-            //                catch (Exception ex) {
-            //                    MessageBox.Show("修改版本号失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //                    return;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            
-
+        private void LaunchCurrentGame() {
             try {
-                // 备份当前版本
-                if (isCheckCurrentVersion) {
-                    if (!Directory.Exists(currentPath) || (isBackup && Directory.Exists(krsdkPath))) {
-                        if (!BackupCurrentVersion()) {
-                            return;
-                        }
-                    }
+                if (!CheckGameFolder() || !CheckCurrentVersion()) {
+                    return;
                 }
-                    
-                
-
-                // 切换到目标版本
-                if (Directory.Exists(targetPath)) {
-                    toolStripStatusLabel1.Text = $"正在恢复文件..";
-                    // 恢复文件
-                    foreach (string fileName in config.filesToBackup) {
-                        string sourceFile = Path.Combine(targetPath, fileName);
-                        string destFile = Path.Combine(config.gameFolderPath, fileName);
-                        if (File.Exists(sourceFile)) {
-                            File.Copy(sourceFile, destFile, true);
-                        }
-                    }
-                    
-                    // 恢复目录
-                    foreach (string dirName in config.directoriesToBackup) {
-                        string sourceDir = Path.Combine(targetPath, dirName);
-                        string destDir = Path.Combine(config.gameFolderPath, dirName);
-                        
-                        if (Directory.Exists(sourceDir)) {
-                            if (Directory.Exists(destDir)) {
-                                Directory.Delete(destDir, true);
-                            }
-                            Directory.CreateDirectory(Path.GetDirectoryName(destDir));
-                            CopyDirectory(sourceDir, destDir);
-                        }
-                    }
-                    
-                    toolStripStatusLabel1.Text = $"已切换到 {aimClientType} 版本";
-
-                    // 更新当前版本信息
-                    CheckCurrentVersion();
-
-                    // 启动游戏
-                    //LaunchCurrentGame();
+                string launchPath;
+                if (currentClientType == ClientType.Bilibili) {
+                    if (!CheckBilibiliLauncher()) {return;}
+                    launchPath = config.client_launch_paths.Bilibili;
+                }
+                else if (currentClientType == ClientType.Official) {
+                    if (!CheckOfficialLauncher()) {return;}
+                    launchPath = config.client_launch_paths.Official;
+                }
+                else if (currentClientType == ClientType.WeGame) {
+                    if (!CheckWeGameLauncher()) {return;}
+                    launchPath = config.client_launch_paths.WeGame;
                 }
                 else {
-                    MessageBox.Show($"未找到 {aimClientType} 的备份\n请手动启动 {aimClientType} 并修复游戏\n然后再使用此程序备份 {aimClientType}\n(官服->WeGame请参考Readme.md使用说明)", "提示", MessageBoxButtons.OK, MessageBoxIcon.None);
-                    toolStripStatusLabel1.Text = $"切换到 {aimClientType} 失败";
+                    MessageBox.Show($"未知的版本: {currentClientType}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
+                Process.Start(launchPath);
+                if (checkBox_isAutoClose.Checked) {
+                    toolStripStatusLabel1.Text = $"已启动 {currentClientType} 客户端, 2s后关闭切换器...";
+                    System.Threading.Tasks.Task.Delay(2500).ContinueWith(t => {
+                        this.BeginInvoke(new Action(() => this.Close()));
+                    });
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show($"启动 {currentClientType} 失败\n" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                toolStripStatusLabel1.Text = $"启动 {currentClientType} 失败";
+            }
+        }
+
+        private void SwitchVersion(ClientType aimClientType, bool isBackup) {
+            if (!CheckGameFolder()) { return; }
+            if (currentClientType == aimClientType) {
+                toolStripStatusLabel1.Text = $"已切换到 {aimClientType} 版本";
+                return;
+            }
+
+            // 检查并关闭游戏和启动器进程
+            if (!CheckAndCloseProcesses()) {
+                return;
+            }
+
+            try {
+                // 切换到目标版本
+                toolStripStatusLabel1.Text = $"正在切换版本..";
+                
+                // 定义路径
+                string krsdkPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+                string thirdPartyPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty");
+                string currentBuckupKrsdkDir = Path.Combine(currentClientType, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+                string targetBuckupKrsdkDir = Path.Combine(aimClientType, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+
+                // 1. 检查当前版本的备份是否存在，若不存在则尝试备份
+                if (!Directory.Exists(currentBuckupKrsdkDir) || isBackup) {
+                    BackupCurrentVersion();
+                }
+                
+                // 2. 检查目标版本的备份是否存在，若不存在则复制一份当前版本备份
+                if (!Directory.Exists(targetBuckupKrsdkDir)) {
+                    if (Directory.Exists(currentBuckupKrsdkDir)) {
+                        CopyDirectory(currentBuckupKrsdkDir, targetBuckupKrsdkDir);
+                    }
+                    if (!Directory.Exists(targetBuckupKrsdkDir)) {
+                        throw new Exception($"{aimClientType} 备份不存在");
+                    }
+                }
+                
+                // 3. 删除当前版本符号链接或实目录
+                if (IsSymlink(krsdkPath)) {
+                    if (!ExecuteCommand($"rd \"{krsdkPath}\"")) {
+                        throw new Exception("删除符号链接失败");
+                    }
+                } else if (Directory.Exists(krsdkPath)) {
+                    // 存在实目录krsdkPath，则重备份并删除实目录
+                    if (!BackupCurrentVersion()) {
+                        return;
+                    }
+
+                    // 备份后会创建指向currentBuckupKrsdkDir的符号链接，需要删除它
+                    if (IsSymlink(krsdkPath)) {
+                        if (!ExecuteCommand($"rd \"{krsdkPath}\"")) {
+                            throw new Exception("删除符号链接失败");
+                        }
+                    }
+                }
+                
+                // 4. 创建目标版本的符号链接（使用相对路径，在thirdPartyPath目录下执行）
+                if (!ExecuteCommand($"mklink /J \"{krsdkPath}\" \"{targetBuckupKrsdkDir}\"")) {
+                    throw new Exception("创建符号链接失败");
+                }
+                
+                toolStripStatusLabel1.Text = $"已切换到 {aimClientType} 版本";
+
+                // 更新当前版本信息
+                CheckGameFolder();
+                CheckCurrentVersion();
+
+                // 启动游戏
+                //LaunchCurrentGame();
+            
+                // MessageBox.Show($"未找到 {aimClientType} 的备份\n请手动启动 {aimClientType} 并修复游戏\n然后再使用此程序备份 {aimClientType}\n(官服->WeGame请参考Readme.md使用说明)", "提示", MessageBoxButtons.OK, MessageBoxIcon.None);
+                // toolStripStatusLabel1.Text = $"切换到 {aimClientType} 失败";
+                
             }
             catch (Exception ex) {
                 CheckCurrentVersion();
@@ -611,35 +649,57 @@ namespace WuWaSwitcher {
         private bool BackupCurrentVersion() {
             try {
                 if (!CheckGameFolder() || !CheckCurrentVersion()) { return false; }
-                // 备份目录的根目录
                 if (currentClientType.IsNull) {
                     MessageBox.Show($"未识别客户端", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
-                string rootBackupPath = currentClientType;
 
+                // 定义路径及检查存在
+                string krsdkPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+                string thirdPartyPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty");
+                string rootBackupPath = currentClientType; // 备份到该目录（当前版本名为目录名）
+                string currentBuckupKrsdkDir = Path.Combine(rootBackupPath, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
+                if (!Directory.Exists(krsdkPath)) {
+                    throw new Exception($"未找到 {krsdkPath} 目录");
+                }
                 if (!Directory.Exists(rootBackupPath)) {
                     Directory.CreateDirectory(rootBackupPath);
                 }
-                // 备份文件
-                foreach (string fileName in config.filesToBackup) {
-                    string sourceFile = Path.Combine(config.gameFolderPath, fileName);
-                    string destFile = Path.Combine(rootBackupPath, fileName);
-                    if (File.Exists(sourceFile)) {
-                        File.Copy(sourceFile, destFile, true);
-                    }
-                }
-                // 备份目录（包括KrPcSdk_Mainland）
-                foreach (string dirName in config.directoriesToBackup) {
-                    string sourceDir = Path.Combine(config.gameFolderPath, dirName);
-                    string destDir = Path.Combine(rootBackupPath, dirName);
-                    
-                    if (Directory.Exists(sourceDir)) {
-                        if (Directory.Exists(destDir)) {
-                            Directory.Delete(destDir, true);
+
+                // 备份并建立krsdkPath的链接
+                if (!IsSymlink(krsdkPath)) {
+                    // 备份所有指定文件和目录
+                    foreach (string fileName in config.filesToBackup) {
+                        string sourceFile = Path.Combine(txtGameFolderPath.Text, fileName);
+                        string destFile = Path.Combine(rootBackupPath, fileName);
+                        if (File.Exists(sourceFile)) {
+                            File.Copy(sourceFile, destFile, true);
                         }
-                        Directory.CreateDirectory(Path.GetDirectoryName(destDir));
-                        CopyDirectory(sourceDir, destDir);
+                    }
+                    // 备份目录（包括KrPcSdk_Mainland）
+                    foreach (string dirName in config.directoriesToBackup) {
+                        string sourceDir = Path.Combine(txtGameFolderPath.Text, dirName);
+                        string destDir = Path.Combine(rootBackupPath, dirName);
+                        
+                        if (Directory.Exists(sourceDir)) {
+                            if (Directory.Exists(destDir)) {
+                                Directory.Delete(destDir, true);
+                            }
+                            Directory.CreateDirectory(Path.GetDirectoryName(destDir));
+                            CopyDirectory(sourceDir, destDir);
+                        }
+                    }
+
+                    // 重命名krpcsdk目录
+                    string old_krsdkPath = Path.Combine(krsdkPath, $"{krsdkPath}-使用三端切换器前的备份");
+                    if (Directory.Exists(old_krsdkPath)) {
+                        Directory.Delete(old_krsdkPath, true);
+                    }
+                    Directory.Move(krsdkPath, old_krsdkPath);
+                    
+                    // 建立krsdkPath链接（使用相对路径，在thirdPartyPath目录下执行）
+                    if (!ExecuteCommand($"mklink /J \"{krsdkPath}\" \"{currentBuckupKrsdkDir}\"")) {
+                        throw new Exception("创建符号链接失败");
                     }
                 }
                 toolStripStatusLabel1.Text = $"已备份 {currentClientType} 版本";

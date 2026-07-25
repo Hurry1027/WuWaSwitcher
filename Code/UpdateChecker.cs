@@ -9,6 +9,7 @@ namespace WuWaSwitcher {
         private const string LATEST_RELEASE_API = "https://gitee.com/api/v5/repos/wn1027/wuwa-switcher/releases/latest";
         public void CheckForUpdate(bool isStrict = false)
         {
+            return; // 调试使用，禁用更新
             try
             {
                 // 获取当前程序版本
