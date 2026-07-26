@@ -178,6 +178,15 @@ namespace WuWaSwitcher {
                 if (txtBilibiliPath.Text != "" && !CheckBilibiliLauncher()) { return false; }
                 if (txtOfficialPath.Text != "" && !CheckOfficialLauncher()) { return false; }
                 if (txtWeGamePath.Text != "" && !CheckWeGameLauncher()) { return false; }
+                if (txtBilibiliPath.Text == ""){
+                    config.client_launch_paths.Bilibili = "";
+                }
+                if (txtOfficialPath.Text == ""){
+                    config.client_launch_paths.Official = "";
+                }
+                if (txtWeGamePath.Text == ""){
+                    config.client_launch_paths.WeGame = "";
+                }
                 _ = Task.Run(async () => await CooldownButton(btnSaveConfig, 3));
                 System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
                 var data = new Dictionary<string, object> {
