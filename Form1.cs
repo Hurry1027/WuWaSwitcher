@@ -656,7 +656,8 @@ namespace WuWaSwitcher {
                         CopyDirectory(sourceDir, destDir);
                     }
                 }
-                toolStripStatusLabel1.Text = $"已备份 {currentClientType} 版本";
+                long backupSize = GetDirectorySize(rootBackupPath);
+                toolStripStatusLabel1.Text = "已备份 " + currentClientType + " 版本 (总大小: " + FormatFileSize(backupSize) + ")";
                 return true;
             }
             catch (Exception ex) {

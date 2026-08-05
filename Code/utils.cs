@@ -233,5 +233,44 @@ namespace WuWaSwitcher {
                 CopyDirectory(subDir, destSubDir);
             }
         }
+
+        private long GetDirectorySize(string directoryPath) {
+            if (!Directory.Exists(directoryPath)) {
+                return 0;
+            }
+
+            long size = 0;
+            try {
+                // 获取目录下所有文件的大小
+                foreach (string file in Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories)) {
+                    try {
+                        FileInfo fileInfo = new FileInfo(file);
+                        size += fileInfo.Length;
+                    }
+                    catch (Exception) {
+                        // 忽略无法访问的文件
+                        continue;
+                    }
+                }
+            }
+            catch (Exception) {
+                // 忽略无法访问的目录
+            }
+
+            return size;
+        }
+
+        private string FormatFileSize(long bytes) {
+            if (bytes < 1024) {
+                return bytes + " B";
+            }
+            if (bytes < 1024L * 1024) {
+                return string.Format("{0:F2} KB", bytes / 1024.0);
+            }
+            if (bytes < 1024L * 1024 * 1024) {
+                return string.Format("{0:F2} MB", bytes / (1024.0 * 1024));
+            }
+            return string.Format("{0:F2} GB", bytes / (1024.0 * 1024 * 1024));
+        }
     }
 }
