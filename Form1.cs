@@ -298,12 +298,14 @@ namespace WuWaSwitcher {
             try {
                 string krsdkConfigPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
                 string launcherDownloadConfigPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig.json");
+                // 检查SDK配置文件是否存在
                 if (!File.Exists(krsdkConfigPath)) {
                     lblCurrentVersion.Text = "未识别客户端(SDK版本识别失败)";
                     lblCurrentVersion.ForeColor = Color.Red;
                     //SetDynamicIcon(Assembly.GetExecutingAssembly().Location);
                     return false;
                 }
+                // 检查launcherDownloadConfig.json, 读取版本号
                 if (File.Exists(launcherDownloadConfigPath)) {
                     string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
                     var launcherConfig = ParseLauncherConfig(launcherJson);
@@ -311,6 +313,7 @@ namespace WuWaSwitcher {
                 }else{
                     currentGameVersion = "未知";
                 }
+                // 识别SDK渠道ID
                 string json = File.ReadAllText(krsdkConfigPath, Encoding.UTF8);
                 var krsdkConfig = ParseKRSDKConfig(json);
                 if (krsdkConfig.KR_ChannelId == "46") {
@@ -630,11 +633,13 @@ namespace WuWaSwitcher {
                 if (!Directory.Exists(rootBackupPath)) {
                     Directory.CreateDirectory(rootBackupPath);
                 }
+
                 // 备份文件
                 foreach (string fileName in config.filesToBackup) {
                     string sourceFile = Path.Combine(config.gameFolderPath, fileName);
                     string destFile = Path.Combine(rootBackupPath, fileName);
                     if (File.Exists(sourceFile)) {
+                        Directory.CreateDirectory(Path.GetDirectoryName(destFile));
                         File.Copy(sourceFile, destFile, true);
                     }
                 }
