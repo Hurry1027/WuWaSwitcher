@@ -630,9 +630,11 @@ namespace WuWaSwitcher {
                 }
                 string rootBackupPath = currentClientType;
 
-                if (!Directory.Exists(rootBackupPath)) {
-                    Directory.CreateDirectory(rootBackupPath);
+                // 清空旧备份，保证目录干净
+                if (Directory.Exists(rootBackupPath)) {
+                    Directory.Delete(rootBackupPath, true);
                 }
+                Directory.CreateDirectory(rootBackupPath);
 
                 // 备份文件
                 foreach (string fileName in config.filesToBackup) {
@@ -649,15 +651,12 @@ namespace WuWaSwitcher {
                     string destDir = Path.Combine(rootBackupPath, dirName);
                     
                     if (Directory.Exists(sourceDir)) {
-                        if (Directory.Exists(destDir)) {
-                            Directory.Delete(destDir, true);
-                        }
                         Directory.CreateDirectory(Path.GetDirectoryName(destDir));
                         CopyDirectory(sourceDir, destDir);
                     }
                 }
                 long backupSize = GetDirectorySize(rootBackupPath);
-                toolStripStatusLabel1.Text = "已备份 " + currentClientType + " 版本 (总大小: " + FormatFileSize(backupSize) + ")";
+                toolStripStatusLabel1.Text = "已备份 " + currentClientType + " 版本 (大小: " + FormatFileSize(backupSize) + ")";
                 return true;
             }
             catch (Exception ex) {
