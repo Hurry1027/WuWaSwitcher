@@ -577,12 +577,18 @@ namespace WuWaSwitcher {
                 // 切换到目标版本
                 if (Directory.Exists(targetPath)) {
                     toolStripStatusLabel1.Text = $"正在恢复文件..";
+                    int skippedFiles = 0;
+                    int skippedDirs = 0;
                     // 恢复文件
                     foreach (string fileName in config.filesToBackup) {
                         string sourceFile = Path.Combine(targetPath, fileName);
                         string destFile = Path.Combine(config.gameFolderPath, fileName);
                         if (File.Exists(sourceFile)) {
+                            Directory.CreateDirectory(Path.GetDirectoryName(destFile));
                             File.Copy(sourceFile, destFile, true);
+                        }
+                        else {
+                            skippedFiles++;
                         }
                     }
                     
@@ -598,9 +604,16 @@ namespace WuWaSwitcher {
                             Directory.CreateDirectory(Path.GetDirectoryName(destDir));
                             CopyDirectory(sourceDir, destDir);
                         }
+                        else {
+                            skippedDirs++;
+                        }
                     }
                     
-                    toolStripStatusLabel1.Text = $"已切换到 {aimClientType} 版本";
+                    string skipInfo = "";
+                    if (skippedFiles > 0 || skippedDirs > 0) {
+                        skipInfo = string.Format(" (跳过 {0} 个文件, {1} 个目录)", skippedFiles, skippedDirs);
+                    }
+                    toolStripStatusLabel1.Text = string.Format("已切换到 {0} 版本{1}", aimClientType, skipInfo);
 
                     // 更新当前版本信息
                     CheckCurrentVersion();
