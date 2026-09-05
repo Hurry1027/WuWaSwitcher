@@ -86,8 +86,9 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnOpenGameFolder = new System.Windows.Forms.Button();
             this.btnScreenShot = new System.Windows.Forms.Button();
-            this.btnReadme = new System.Windows.Forms.Button();
             this.btnCheckUpdate = new System.Windows.Forms.LinkLabel();
+            this.linkLabelReadme = new System.Windows.Forms.LinkLabel();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -239,7 +240,7 @@
             // 
             // btnSaveConfig
             // 
-            this.btnSaveConfig.Location = new System.Drawing.Point(918, 287);
+            this.btnSaveConfig.Location = new System.Drawing.Point(920, 287);
             this.btnSaveConfig.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveConfig.Name = "btnSaveConfig";
             this.btnSaveConfig.Size = new System.Drawing.Size(102, 34);
@@ -418,7 +419,7 @@
             // linkLabelGitee
             // 
             this.linkLabelGitee.AutoSize = true;
-            this.linkLabelGitee.Location = new System.Drawing.Point(950, 530);
+            this.linkLabelGitee.Location = new System.Drawing.Point(944, 530);
             this.linkLabelGitee.Name = "linkLabelGitee";
             this.linkLabelGitee.Size = new System.Drawing.Size(80, 18);
             this.linkLabelGitee.TabIndex = 7;
@@ -507,27 +508,16 @@
             this.btnScreenShot.Location = new System.Drawing.Point(18, 287);
             this.btnScreenShot.Margin = new System.Windows.Forms.Padding(4);
             this.btnScreenShot.Name = "btnScreenShot";
-            this.btnScreenShot.Size = new System.Drawing.Size(138, 34);
+            this.btnScreenShot.Size = new System.Drawing.Size(120, 34);
             this.btnScreenShot.TabIndex = 5;
-            this.btnScreenShot.Text = "截图文件夹";
+            this.btnScreenShot.Text = "截图目录";
             this.btnScreenShot.UseVisualStyleBackColor = true;
             this.btnScreenShot.Click += new System.EventHandler(this.btnScreenShot_Click);
-            // 
-            // btnReadme
-            // 
-            this.btnReadme.Location = new System.Drawing.Point(164, 287);
-            this.btnReadme.Margin = new System.Windows.Forms.Padding(4);
-            this.btnReadme.Name = "btnReadme";
-            this.btnReadme.Size = new System.Drawing.Size(138, 34);
-            this.btnReadme.TabIndex = 7;
-            this.btnReadme.Text = "使用说明";
-            this.btnReadme.UseVisualStyleBackColor = true;
-            this.btnReadme.Click += new System.EventHandler(this.btnReadme_Click);
             // 
             // btnCheckUpdate
             // 
             this.btnCheckUpdate.AutoSize = true;
-            this.btnCheckUpdate.Location = new System.Drawing.Point(864, 530);
+            this.btnCheckUpdate.Location = new System.Drawing.Point(772, 530);
             this.btnCheckUpdate.Name = "btnCheckUpdate";
             this.btnCheckUpdate.Size = new System.Drawing.Size(80, 18);
             this.btnCheckUpdate.TabIndex = 9;
@@ -535,13 +525,36 @@
             this.btnCheckUpdate.Text = "检查更新";
             this.btnCheckUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.btnCheckUpdate_LinkClicked);
             // 
+            // linkLabelReadme
+            // 
+            this.linkLabelReadme.AutoSize = true;
+            this.linkLabelReadme.Location = new System.Drawing.Point(858, 530);
+            this.linkLabelReadme.Name = "linkLabelReadme";
+            this.linkLabelReadme.Size = new System.Drawing.Size(80, 18);
+            this.linkLabelReadme.TabIndex = 10;
+            this.linkLabelReadme.TabStop = true;
+            this.linkLabelReadme.Text = "使用说明";
+            this.linkLabelReadme.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelReadme_LinkClicked);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(146, 287);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(120, 34);
+            this.button1.TabIndex = 11;
+            this.button1.Text = "切换器目录";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnSwitcherFolder_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1050, 580);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.linkLabelReadme);
             this.Controls.Add(this.btnCheckUpdate);
-            this.Controls.Add(this.btnReadme);
             this.Controls.Add(this.btnScreenShot);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.linkLabelGitee);
@@ -555,7 +568,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "鸣潮官服B服WeGame切换器1.2.3";
+            this.Text = "鸣潮官服B服WeGame切换器1.2.4";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -579,7 +592,6 @@
         private System.Windows.Forms.Button btnBackupSwitchOfficialVersion;
         private System.Windows.Forms.CheckBox checkBox_isAutoClose;
         private System.Windows.Forms.Button btnScreenShot;
-        private System.Windows.Forms.Button btnReadme;
         private System.Windows.Forms.Button btn_bakcupCurrentVersion;
         private System.Windows.Forms.Button btnOpenGameFolder;
         private System.Windows.Forms.Button btnLaunchBilibili;
@@ -596,6 +608,8 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnCheckGame;
         private System.Windows.Forms.LinkLabel btnCheckUpdate;
+        private System.Windows.Forms.LinkLabel linkLabelReadme;
+        private System.Windows.Forms.Button button1;
     }
 }
 

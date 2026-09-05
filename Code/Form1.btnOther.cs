@@ -62,19 +62,19 @@ namespace WuWaSwitcher {
 
         private void btnLaunchBilibili_Click(object sender, EventArgs e) {
             if (!CheckBilibiliLauncher()) { return; }
-            _ = Task.Run(async () => await CooldownButton(btnLaunchBilibili, 3));
+            _ = Task.Run(async () => await Utils.CooldownButton(btnLaunchBilibili, 3));
             Process.Start(txtBilibiliPath.Text);
         }
 
         private void btnLaunchOfficial_Click(object sender, EventArgs e) {
             if (!CheckOfficialLauncher()) { return; }
-            _ = Task.Run(async () => await CooldownButton(btnLaunchOfficial, 3));
+            _ = Task.Run(async () => await Utils.CooldownButton(btnLaunchOfficial, 3));
             Process.Start(txtOfficialPath.Text);
         }
 
         private void btnLaunchWeGame_Click(object sender, EventArgs e) {
             if (!CheckWeGameLauncher()) { return; }
-            _ = Task.Run(async () => await CooldownButton(btnLaunchWeGame, 3));
+            _ = Task.Run(async () => await Utils.CooldownButton(btnLaunchWeGame, 3));
             Process.Start(txtWeGamePath.Text);
         }
 
@@ -99,7 +99,29 @@ namespace WuWaSwitcher {
             }
         }
 
-        private void btnReadme_Click(object sender, EventArgs e) {
+        private void btnSwitcherFolder_Click(object sender, EventArgs e) {
+            try {
+                Process.Start("explorer.exe", Path.Combine("."));
+                toolStripStatusLabel1.Text = "已打开切换器目录";
+            }
+            catch (Exception ex) {
+                MessageBox.Show("打开切换器目录失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                toolStripStatusLabel1.Text = "打开切换器目录失败";
+            }
+        }
+
+        private void btnWuWaDiff_Click(object sender, EventArgs e) {
+            try {
+                Process.Start("explorer.exe", Path.Combine("."));
+                toolStripStatusLabel1.Text = "已打开切换器目录";
+            }
+            catch (Exception ex) {
+                MessageBox.Show("打开切换器目录失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                toolStripStatusLabel1.Text = "打开切换器目录失败";
+            }
+        }
+
+        private void linkLabelGitee_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             try {
                 Process.Start("https://gitee.com/wn1027/wuwa-switcher");
                 toolStripStatusLabel1.Text = "已打开项目主页";
@@ -107,25 +129,12 @@ namespace WuWaSwitcher {
             catch (Exception ex) {
                 MessageBox.Show("无法打开链接: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            //try {
-            //    string readmePath = Path.Combine(Application.StartupPath, "README.md");
-            //    if (File.Exists(readmePath)) {
-            //        Process.Start(readmePath);
-            //        toolStripStatusLabel1.Text = "已打开README文件";
-            //    }
-            //    else {
-            //        MessageBox.Show("README文件不存在\n" + readmePath, "错误", MessageBoxButtons.OK, MessageBoxIcon.None);
-            //    }
-            //}
-            //catch (Exception ex) {
-            //    MessageBox.Show("无法打开README文件: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //}
         }
 
-        private void linkLabelGitee_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+        private void linkLabelReadme_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             try {
                 Process.Start("https://gitee.com/wn1027/wuwa-switcher");
-                toolStripStatusLabel1.Text = "已打开项目主页";
+                toolStripStatusLabel1.Text = "已打开项目主页使用说明";
             }
             catch (Exception ex) {
                 MessageBox.Show("无法打开链接: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);

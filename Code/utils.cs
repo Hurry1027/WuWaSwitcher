@@ -10,9 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WuWaSwitcher {
-    public partial class Form1 {
-
-        private string FormatJson(string json, int indentSize = 4) {
+    public class Utils {
+        public static string FormatJson(string json, int indentSize = 4) {
             string formatted = "";
             int indent = 0;
             bool inString = false;
@@ -86,7 +85,7 @@ namespace WuWaSwitcher {
         }
 
         // 批量检查进程是否运行的优化方法
-        private List<ProcessCheckInfo> CheckProcessesBatch(List<ProcessCheckInfo> processesToCheck) {
+        public static List<ProcessCheckInfo> CheckProcessesBatch(List<ProcessCheckInfo> processesToCheck) {
             List<ProcessCheckInfo> runningProcesses = new List<ProcessCheckInfo>();
             
             // 优化：将进程按文件名分组，加速查找
@@ -137,7 +136,7 @@ namespace WuWaSwitcher {
         }
         
         // 批量终止进程的优化方法
-        private void KillProcessesBatch(List<ProcessCheckInfo> processesToKill) {
+        public static void KillProcessesBatch(List<ProcessCheckInfo> processesToKill) {
             try {
                 // 将进程按文件名分组，加速查找
                 Dictionary<string, List<ProcessCheckInfo>> processesByFileName = new Dictionary<string, List<ProcessCheckInfo>>(StringComparer.OrdinalIgnoreCase);
@@ -187,24 +186,24 @@ namespace WuWaSwitcher {
             }
         }
 
-        private void SetDynamicIcon(string clientPath) {
-            try {
-                // 从配置中获取客户端路径并设置图标
-                if (!string.IsNullOrEmpty(clientPath) && File.Exists(clientPath)) {
-                    // 提取客户端的图标
-                    Icon appIcon = System.Drawing.Icon.ExtractAssociatedIcon(clientPath);
-                    this.Icon = appIcon;
-                    notifyIcon1.Icon = appIcon;
-                }
-            }
-            catch (Exception ex) {
-                // 如果提取图标失败，使用默认图标
-                // 这里可以添加日志记录
-                System.Diagnostics.Debug.WriteLine("设置动态图标失败: " + ex.Message);
-            }
-        }
+        //public static void SetDynamicIcon(string clientPath) {
+        //    try {
+        //        // 从配置中获取客户端路径并设置图标
+        //        if (!string.IsNullOrEmpty(clientPath) && File.Exists(clientPath)) {
+        //            // 提取客户端的图标
+        //            Icon appIcon = System.Drawing.Icon.ExtractAssociatedIcon(clientPath);
+        //            this.Icon = appIcon;
+        //            notifyIcon1.Icon = appIcon;
+        //        }
+        //    }
+        //    catch (Exception ex) {
+        //        // 如果提取图标失败，使用默认图标
+        //        // 这里可以添加日志记录
+        //        System.Diagnostics.Debug.WriteLine("设置动态图标失败: " + ex.Message);
+        //    }
+        //}
 
-        private async Task CooldownButton(Button button, int seconds) {
+        public static async Task CooldownButton(Button button, int seconds) {
             button.Enabled = false;
             //string originalText = button.Text;
             for (int i = seconds; i > 0; i--) {
@@ -215,7 +214,7 @@ namespace WuWaSwitcher {
             button.Enabled = true;
         }
 
-        private void CopyDirectory(string sourceDir, string destDir) {
+        public static void CopyDirectory(string sourceDir, string destDir) {
             // 创建目标目录
             if (!Directory.Exists(destDir)) {
                 Directory.CreateDirectory(destDir);
@@ -234,7 +233,7 @@ namespace WuWaSwitcher {
             }
         }
 
-        private long GetDirectorySize(string directoryPath) {
+        public static long GetDirectorySize(string directoryPath) {
             if (!Directory.Exists(directoryPath)) {
                 return 0;
             }
@@ -260,7 +259,7 @@ namespace WuWaSwitcher {
             return size;
         }
 
-        private string FormatFileSize(long bytes) {
+        public static string FormatFileSize(long bytes) {
             if (bytes < 1024) {
                 return bytes + " B";
             }

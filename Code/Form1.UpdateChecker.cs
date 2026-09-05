@@ -9,6 +9,8 @@ namespace WuWaSwitcher {
         private const string LATEST_RELEASE_API = "https://gitee.com/api/v5/repos/wn1027/wuwa-switcher/releases/latest";
         public void CheckForUpdate(bool isStrict = false)
         {
+            //开发测试
+            //return;
             try
             {
                 // 获取当前程序版本
@@ -30,7 +32,7 @@ namespace WuWaSwitcher {
                     // 比较版本
                     if (IsNewerVersion(latestVersion, currentVersion)) {
                         // 检查是否忽略了此版本
-                        if (isStrict || config.ignoredVersion != latestVersion) {
+                        if (isStrict || config.IgnoredVersion != latestVersion) {
                             // 显示更新提示
                             toolStripStatusLabel1.Text = $"发现新版本: {latestVersion}";
                             ShowUpdateNotification(latestVersion, releaseName, releaseNotes);
@@ -105,7 +107,7 @@ namespace WuWaSwitcher {
             else if (result == DialogResult.No)
             {
                 // 忽略此版本
-                config.ignoredVersion = latestVersion;
+                config.IgnoredVersion = latestVersion;
                 SaveConfig();
             }
             // Cancel: 不做任何处理，下次还会提示

@@ -12,7 +12,7 @@ namespace WuWaSwitcher {
             bool isUpdated = false;
             string message = "配置文件已更新(config.json)";
             // 检查是否需要更新配置
-            if (string.IsNullOrEmpty(config.configVersion) || IsOlderVersion(config.configVersion, "1.2.0"))
+            if (string.IsNullOrEmpty(config.ConfigVersion) || IsOlderVersion(config.ConfigVersion, "1.2.0"))
             {
                 UpdateConfigToVersion1_2_0(config);
                 isUpdated = true;
@@ -28,11 +28,11 @@ namespace WuWaSwitcher {
             if (isUpdated)
             {
                 // 保存更新后的配置
-                txtGameFolderPath.Text = config.gameFolderPath;
-                txtBilibiliPath.Text = config.client_launch_paths.Bilibili;
-                txtOfficialPath.Text = config.client_launch_paths.Official;
-                txtWeGamePath.Text = config.client_launch_paths.WeGame;
-                checkBox_isAutoClose.Checked = config.isAutoCloseSwitcher;
+                txtGameFolderPath.Text = config.GameFolderPath;
+                txtBilibiliPath.Text = config.Client_launch_paths.Bilibili;
+                txtOfficialPath.Text = config.Client_launch_paths.Official;
+                txtWeGamePath.Text = config.Client_launch_paths.WeGame;
+                checkBox_isAutoClose.Checked = config.IsAutoCloseSwitcher;
                 SaveConfig();
                 MessageBox.Show(message, "配置文件更新", MessageBoxButtons.OK, MessageBoxIcon.None);
             }
@@ -56,15 +56,15 @@ namespace WuWaSwitcher {
         private void UpdateConfigToVersion1_2_0(Config config)
         {
             // 移除过时的配置项
-            if (config.filesToBackup != null)
+            if (config.FilesToBackup != null)
             {
-                config.filesToBackup = config.filesToBackup
+                config.FilesToBackup = config.FilesToBackup
                     .Where(file => file != "launcherDownloadConfig.json" && file != "LocalGameResources.json")
                     .ToArray();
             }
             
             // 更新配置版本
-            config.configVersion = "1.2.0";
+            config.ConfigVersion = "1.2.0";
         }
     }
 }

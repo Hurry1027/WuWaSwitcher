@@ -83,6 +83,14 @@
     <StartupObject>WuWaSwitcher.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <Win32Resource>
+    </Win32Resource>
+  </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -104,16 +112,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Code\btnOther.cs">
+    <Compile Include="Code\Form1.btnOther.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Code\btnSwitch.cs">
+    <Compile Include="Code\Form1.btnSwitch.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Code\ConfigUpdater.cs">
+    <Compile Include="Code\Form1.Config.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Code\UpdateChecker.cs">
+    <Compile Include="Code\Config.cs" />
+    <Compile Include="Code\Form1.ConfigUpdater.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Code\ResourceDiff.cs" />
+    <Compile Include="Code\Form1.UpdateChecker.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.cs">
@@ -124,9 +137,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Code\utils.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Code\utils.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -150,7 +161,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\icon.ico" />
     <None Include="WuWaSwitcher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +178,5 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
