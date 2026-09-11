@@ -89,6 +89,7 @@
             this.btnCheckUpdate = new System.Windows.Forms.LinkLabel();
             this.linkLabelReadme = new System.Windows.Forms.LinkLabel();
             this.button1 = new System.Windows.Forms.Button();
+            this.btnWuWaDiff = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -547,11 +548,23 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnSwitcherFolder_Click);
             // 
+            // btnWuWaDiff
+            // 
+            this.btnWuWaDiff.Location = new System.Drawing.Point(274, 287);
+            this.btnWuWaDiff.Margin = new System.Windows.Forms.Padding(4);
+            this.btnWuWaDiff.Name = "btnWuWaDiff";
+            this.btnWuWaDiff.Size = new System.Drawing.Size(120, 34);
+            this.btnWuWaDiff.TabIndex = 13;
+            this.btnWuWaDiff.Text = "差异计算";
+            this.btnWuWaDiff.UseVisualStyleBackColor = true;
+            this.btnWuWaDiff.Click += new System.EventHandler(this.btnWuWaDiff_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1050, 580);
+            this.Controls.Add(this.btnWuWaDiff);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.linkLabelReadme);
             this.Controls.Add(this.btnCheckUpdate);
@@ -568,7 +581,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "鸣潮官服B服WeGame切换器1.2.4";
+            this.Text = "鸣潮官服B服WeGame切换器1.3.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -610,6 +623,7 @@
         private System.Windows.Forms.LinkLabel btnCheckUpdate;
         private System.Windows.Forms.LinkLabel linkLabelReadme;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnWuWaDiff;
     }
 }
 

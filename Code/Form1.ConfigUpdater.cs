@@ -48,8 +48,9 @@ namespace WuWaSwitcher {
             }
             catch
             {
-                // 如果版本号格式不正确，认为是旧版本
-                return true;
+                // 如果版本号格式不正确，不要更新
+                MessageBox.Show($"配置文件版本号解析失败\ncurrentVersion: {currentVersion}\ntargetVersion: {targetVersion}", "配置文件版本号解析失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
         }
 

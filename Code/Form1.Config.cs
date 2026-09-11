@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static WuWaSwitcher.Config;
 
 
 namespace WuWaSwitcher {
@@ -161,7 +162,7 @@ namespace WuWaSwitcher {
                 // 检查launcherDownloadConfig.json, 读取版本号
                 if (File.Exists(launcherDownloadConfigPath)) {
                     string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
-                    var launcherConfig = config.ParseLauncherConfig(launcherJson);
+                    var launcherConfig = Config.ParseLauncherConfig(launcherJson);
                     currentGameVersion = launcherConfig.Version;
                 }
                 else {
@@ -169,7 +170,7 @@ namespace WuWaSwitcher {
                 }
                 // 识别SDK渠道ID
                 string json = File.ReadAllText(krsdkConfigPath, Encoding.UTF8);
-                var krsdkConfig = config.ParseKRSDKConfig(json);
+                var krsdkConfig = Config.ParseKRSDKConfig(json);
                 if (krsdkConfig.KR_ChannelId == "46") {
                     currentClientType = ClientType.Bilibili;
                     //SetDynamicIcon(txtBilibiliPath.Text);

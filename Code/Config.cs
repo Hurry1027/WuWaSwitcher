@@ -104,7 +104,7 @@ namespace WuWaSwitcher {
             }
         }
 
-        public KRSDKConfig ParseKRSDKConfig(string json) {
+        public static KRSDKConfig ParseKRSDKConfig(string json) {
             System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             var data = serializer.Deserialize<Dictionary<string, object>>(json);
 
@@ -115,7 +115,7 @@ namespace WuWaSwitcher {
             };
         }
 
-        public LauncherConfig ParseLauncherConfig(string json) {
+        public static LauncherConfig ParseLauncherConfig(string json) {
             System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             var data = serializer.Deserialize<Dictionary<string, object>>(json);
 
@@ -126,6 +126,18 @@ namespace WuWaSwitcher {
                 IsPreDownload = data.ContainsKey("isPreDownload") && data["isPreDownload"] is bool ? (bool)data["isPreDownload"] : false,
                 AppId = data["appId"]?.ToString() ?? ""
             };
+        }
+
+        // 获取sdk版本号
+        public static string getKrSdkVersion(ClientType clientType) {
+            string krsdkConfigPath = Path.Combine(clientType.ToString(), "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
+            // 检查SDK配置文件是否存在
+            if (!File.Exists(krsdkConfigPath)) {
+                return null;
+            }
+            string json = File.ReadAllText(krsdkConfigPath, Encoding.UTF8);
+            var krsdkConfig = ParseKRSDKConfig(json);
+            return krsdkConfig.KR_GameVersion;
         }
 
         [DataMember]

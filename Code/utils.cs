@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -270,6 +272,15 @@ namespace WuWaSwitcher {
                 return string.Format("{0:F2} MB", bytes / (1024.0 * 1024));
             }
             return string.Format("{0:F2} GB", bytes / (1024.0 * 1024 * 1024));
+        }
+
+        // 判断数组set相等(无序)
+        public static bool AreStringArraysSetEqual(string[] arr1, string[] arr2) {
+            if (arr1 == null && arr2 == null) return true;
+            if (arr1 == null || arr2 == null) return false;
+            if (arr1.Length != arr2.Length) return false;
+            var set = new HashSet<string>(arr1);
+            return arr2.All(x => set.Contains(x));
         }
     }
 }

@@ -344,6 +344,8 @@ namespace WuWaSwitcher {
         private bool BackupCurrentVersion() {
             try {
                 if (!CheckGameFolder() || !CheckCurrentVersion()) { return false; }
+                int skipFileNum = 0;
+                int skipFolderNum = 0;
                 // 备份目录的根目录
                 if (currentClientType.IsNull) {
                     MessageBox.Show($"未识别客户端", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -365,19 +367,30 @@ namespace WuWaSwitcher {
                         Directory.CreateDirectory(Path.GetDirectoryName(destFile));
                         File.Copy(sourceFile, destFile, true);
                     }
+                    else {
+                        skipFileNum++;
+                    }
                 }
                 // 备份目录（包括KrPcSdk_Mainland）
                 foreach (string dirName in config.DirectoriesToBackup) {
                     string sourceDir = Path.Combine(config.GameFolderPath, dirName);
                     string destDir = Path.Combine(rootBackupPath, dirName);
-                    
+
                     if (Directory.Exists(sourceDir)) {
                         Directory.CreateDirectory(Path.GetDirectoryName(destDir));
                         Utils.CopyDirectory(sourceDir, destDir);
                     }
+                    else {
+                        skipFolderNum++;
+                    }
                 }
                 long backupSize = Utils.GetDirectorySize(rootBackupPath);
-                toolStripStatusLabel1.Text = "已备份 " + currentClientType + " 版本 (大小: " + Utils.FormatFileSize(backupSize) + ")";
+                string skipTipStr = "";
+                var skipParts = new List<string>();
+                if (skipFileNum > 0) { skipParts.Add($"{skipFileNum} 个文件"); }
+                if (skipFolderNum > 0) { skipParts.Add($"{skipFolderNum} 个目录"); }
+                if (skipParts.Count > 0) { skipTipStr = " " + string.Join("、", skipParts) + "不存在"; }
+                toolStripStatusLabel1.Text = "已备份 " + currentClientType + " 版本 (大小: " + Utils.FormatFileSize(backupSize) + ")"+skipTipStr;
                 return true;
             }
             catch (Exception ex) {
