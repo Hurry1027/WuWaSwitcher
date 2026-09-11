@@ -5,7 +5,16 @@ WuWaSwitcher 是一个用于切换《鸣潮》游戏客户端版本的便捷工�
 原理是对游戏的KrPcSdk_Mainland文件夹进行备份和恢复。
 
 ## 近期公告
-### **鸣潮3.6.0版本与3.5.3版本差异文件路径完全相同**
+### **2026.9.11 鸣潮3.6.1版本B服更新**
+当前版本 (2026.09.11 12:00:00): 
+`官方客户端3.6.0(SDK3.6.0)`
+`Bilibili客户端3.6.1(SDK3.6.1)`
+
+新增差异清单项（添加到config.json\"filesToBackup"下）:
+"Client/Binaries/Win64/AntiCheatExpert/ACE-Base64.dll",
+"Client/Binaries/Win64/AntiCheatExpert/ACE-IDS64.dll",
+
+### **2026.8.20 鸣潮3.6.0版本与3.5.3版本差异文件路径完全相同**
 请按照切换器(1.2.3版本)压缩包内`参考config.json`修改`切换器所在目录\config.json`，添加所需备份文件路径。
 具体来说，复制填入`"filesToBackup"`字段即可，**记得在版本转换前备份当前客户端**，各客户端都备份后可以顺利切换。
 
