@@ -198,7 +198,7 @@ namespace WuWaSwitcher {
 
         private async void btnCheckUpdate_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             btnCheckUpdate.Enabled = false;
-            CheckForUpdate(true);
+            CheckForUpdate(true, true);
             await Task.Delay(3000);
             //只能调用一次，防止触发频率限制
             //btnCheckUpdate.Enabled = true;

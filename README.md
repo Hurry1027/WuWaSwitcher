@@ -14,6 +14,7 @@ WuWaSwitcher 是一个用于切换《鸣潮》游戏客户端版本的便捷工�
 `Bilibili客户端3.6.1(SDK3.6.1)`
 
 新增差异清单项（添加到config.json"filesToBackup"下）:\
+切换器1.3.0版本压缩包内默认配置文件已添加，就不要再加了
 "Client/Binaries/Win64/AntiCheatExpert/ACE-Base64.dll",\
 "Client/Binaries/Win64/AntiCheatExpert/ACE-IDS64.dll",
 

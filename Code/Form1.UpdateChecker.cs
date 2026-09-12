@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace WuWaSwitcher {
     public partial class Form1 {
         private const string LATEST_RELEASE_API = "https://gitee.com/api/v5/repos/wn1027/wuwa-switcher/releases/latest";
-        public void CheckForUpdate(bool isStrict = false)
+        public void CheckForUpdate(bool isStrict = false, bool isMessageBox = false)
         {
             //开发测试
             //return;
@@ -39,6 +39,9 @@ namespace WuWaSwitcher {
                         }
                     }
                     else {
+                        if (isMessageBox) {
+                            MessageBox.Show($"已是最新版本: {latestVersion}", "检查更新完成");
+                        }
                         toolStripStatusLabel1.Text = $"已是最新版本: {latestVersion}";
                     }
                 }
