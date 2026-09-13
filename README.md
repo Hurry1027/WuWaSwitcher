@@ -31,7 +31,7 @@ WuWaSwitcher 是一个用于切换《鸣潮》游戏客户端版本的便捷工�
 - 🔍 **版本检测** - 自动识别当前游戏客户端
 - 🎮 **直接启动** - 快速启动当前配置的客户端
 
-![软件截图](Resources/WuWaSwitcher1.2.1.png)
+![软件截图](Resources/WuWaSwitcher1.3.0.png)
 
 ## 使用说明
 
