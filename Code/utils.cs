@@ -4,10 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -281,6 +279,33 @@ namespace WuWaSwitcher {
             if (arr1.Length != arr2.Length) return false;
             var set = new HashSet<string>(arr1);
             return arr2.All(x => set.Contains(x));
+        }
+
+        // 判断游戏版本是否更新(根据currentGameVersion)
+        public static Version TryParseGameVersion(string s) {
+            if (string.IsNullOrWhiteSpace(s)) return null;
+            s = s.Trim();
+            if (!s.Contains('.')) s += ".0";   // 兼容 "5" → "5.0"
+            if (!Version.TryParse(s, out var v)) return null;
+            // 归一化：1.2.3 与 1.2.3.0 视为相同
+            return new Version(
+                v.Major,
+                v.Minor,
+                v.Build < 0 ? 0 : v.Build,
+                v.Revision < 0 ? 0 : v.Revision);
+        }
+
+        /// <summary>
+        /// 判断 newVer 是否比 oldVer 新。
+        /// 返回 true  = newVer 更高
+        /// 返回 false = newVer 不高于 oldVer（相同或更低）
+        /// 返回 null  = 任一边无法解析（"未知"、null、空、格式非法），无法比较
+        /// </summary>
+        public static bool? IsNewerGameVersion(string newVer, string oldVer) {
+            var a = TryParseGameVersion(oldVer);
+            var b = TryParseGameVersion(newVer);
+            if (a == null || b == null) return null;
+            return b > a;
         }
     }
 }

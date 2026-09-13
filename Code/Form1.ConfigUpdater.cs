@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WuWaSwitcher {
@@ -17,6 +14,12 @@ namespace WuWaSwitcher {
                 UpdateConfigToVersion1_2_0(config);
                 isUpdated = true;
                 message += "\n1.2.0 去除了对launcherDownloadConfig.json和LocalGameResources.json的备份";
+            }
+
+            if (string.IsNullOrEmpty(config.ConfigVersion) || IsOlderVersion(config.ConfigVersion, "1.3.0")) {
+                UpdateConfigToVersion1_3_0(config);
+                isUpdated = true;
+                message += "\n1.3.0 增加对launcherDownloadConfig.json和LocalGameResources.json的备份";
             }
 
             // 可以在这里添加更多版本更新逻辑
@@ -54,8 +57,7 @@ namespace WuWaSwitcher {
             }
         }
 
-        private void UpdateConfigToVersion1_2_0(Config config)
-        {
+        private void UpdateConfigToVersion1_2_0(Config config) {
             // 移除过时的配置项
             if (config.FilesToBackup != null)
             {
@@ -66,6 +68,18 @@ namespace WuWaSwitcher {
             
             // 更新配置版本
             config.ConfigVersion = "1.2.0";
+        }
+
+        private void UpdateConfigToVersion1_3_0(Config config) {
+            if (config.FilesToBackup != null) { 
+                if (!config.FilesToBackup.Contains("LocalGameResources.json")) {
+                    config.FilesToBackup = new[] { "LocalGameResources.json" }.Concat(config.FilesToBackup).ToArray();
+                }
+                if (!config.FilesToBackup.Contains("launcherDownloadConfig.json")) {
+                    config.FilesToBackup = new[] { "launcherDownloadConfig.json" }.Concat(config.FilesToBackup).ToArray();
+                }
+            }
+            config.ConfigVersion = "1.3.0";
         }
     }
 }

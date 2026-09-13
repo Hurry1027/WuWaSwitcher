@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.IO;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
@@ -35,6 +34,7 @@ namespace WuWaSwitcher {
                         if (isStrict || config.IgnoredVersion != latestVersion) {
                             // 显示更新提示
                             toolStripStatusLabel1.Text = $"发现新版本: {latestVersion}";
+                            statusStrip1.Refresh();
                             ShowUpdateNotification(latestVersion, releaseName, releaseNotes);
                         }
                     }
@@ -43,16 +43,19 @@ namespace WuWaSwitcher {
                             MessageBox.Show($"已是最新版本: {latestVersion}", "检查更新完成");
                         }
                         toolStripStatusLabel1.Text = $"已是最新版本: {latestVersion}";
+                        statusStrip1.Refresh();
                     }
                 }
                 else {
                     toolStripStatusLabel1.Text = $"暂无法获取更新信息";
+                    statusStrip1.Refresh();
                 }
             }
             catch (Exception ex)
             {
                 // 如果检查更新失败，不影响程序正常运行
                 toolStripStatusLabel1.Text = "检查更新失败: " + ex.Message;
+                statusStrip1.Refresh();
                 return;
             }
         }

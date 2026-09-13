@@ -12,8 +12,14 @@ namespace WuWaSwitcher {
 
         private void btnBackup_Click(object sender, EventArgs e) {
             _ = Task.Run(async () => await Utils.CooldownButton(btn_bakcupCurrentVersion, 5));
-            if (BackupCurrentVersion()) {
+            bool? backupResult = BackupCurrentVersion();
+            if (backupResult == null) {
+                MessageBox.Show($"备份按钮操作已取消 {currentClientType}, 你可以尝试再次备份", "备份已取消", MessageBoxButtons.OK, MessageBoxIcon.None);
+                return;
+            }
+            if (BackupCurrentVersion() == true) {
                 MessageBox.Show($"已成功备份当前版本 {currentClientType}", "成功", MessageBoxButtons.OK, MessageBoxIcon.None);
+                return;
             }
         }
 

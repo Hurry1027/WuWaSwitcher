@@ -74,7 +74,7 @@
             this.btnSwitchOfficialVersion = new System.Windows.Forms.Button();
             this.btnLaunchCurrent = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labelTip = new System.Windows.Forms.Label();
             this.linkLabelGitee = new System.Windows.Forms.LinkLabel();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -87,8 +87,8 @@
             this.btnOpenGameFolder = new System.Windows.Forms.Button();
             this.btnScreenShot = new System.Windows.Forms.Button();
             this.btnCheckUpdate = new System.Windows.Forms.LinkLabel();
-            this.linkLabelReadme = new System.Windows.Forms.LinkLabel();
             this.button1 = new System.Windows.Forms.Button();
+            this.btnLoadConfig = new System.Windows.Forms.Button();
             this.btnWuWaDiff = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -407,20 +407,20 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "当前版本：";
             // 
-            // label5
+            // labelTip
             // 
-            this.label5.AutoSize = true;
-            this.label5.ForeColor = System.Drawing.Color.DimGray;
-            this.label5.Location = new System.Drawing.Point(25, 530);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(314, 18);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "版本号变化后一定记得备份当前客户端";
+            this.labelTip.AutoSize = true;
+            this.labelTip.ForeColor = System.Drawing.Color.DimGray;
+            this.labelTip.Location = new System.Drawing.Point(25, 530);
+            this.labelTip.Name = "labelTip";
+            this.labelTip.Size = new System.Drawing.Size(314, 18);
+            this.labelTip.TabIndex = 8;
+            this.labelTip.Text = "版本号变化后一定记得备份当前客户端";
             // 
             // linkLabelGitee
             // 
             this.linkLabelGitee.AutoSize = true;
-            this.linkLabelGitee.Location = new System.Drawing.Point(944, 530);
+            this.linkLabelGitee.Location = new System.Drawing.Point(952, 530);
             this.linkLabelGitee.Name = "linkLabelGitee";
             this.linkLabelGitee.Size = new System.Drawing.Size(80, 18);
             this.linkLabelGitee.TabIndex = 7;
@@ -518,24 +518,13 @@
             // btnCheckUpdate
             // 
             this.btnCheckUpdate.AutoSize = true;
-            this.btnCheckUpdate.Location = new System.Drawing.Point(772, 530);
+            this.btnCheckUpdate.Location = new System.Drawing.Point(866, 530);
             this.btnCheckUpdate.Name = "btnCheckUpdate";
             this.btnCheckUpdate.Size = new System.Drawing.Size(80, 18);
             this.btnCheckUpdate.TabIndex = 9;
             this.btnCheckUpdate.TabStop = true;
             this.btnCheckUpdate.Text = "检查更新";
             this.btnCheckUpdate.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.btnCheckUpdate_LinkClicked);
-            // 
-            // linkLabelReadme
-            // 
-            this.linkLabelReadme.AutoSize = true;
-            this.linkLabelReadme.Location = new System.Drawing.Point(858, 530);
-            this.linkLabelReadme.Name = "linkLabelReadme";
-            this.linkLabelReadme.Size = new System.Drawing.Size(80, 18);
-            this.linkLabelReadme.TabIndex = 10;
-            this.linkLabelReadme.TabStop = true;
-            this.linkLabelReadme.Text = "使用说明";
-            this.linkLabelReadme.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelReadme_LinkClicked);
             // 
             // button1
             // 
@@ -548,14 +537,25 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnSwitcherFolder_Click);
             // 
+            // btnLoadConfig
+            // 
+            this.btnLoadConfig.Location = new System.Drawing.Point(808, 287);
+            this.btnLoadConfig.Margin = new System.Windows.Forms.Padding(4);
+            this.btnLoadConfig.Name = "btnLoadConfig";
+            this.btnLoadConfig.Size = new System.Drawing.Size(102, 34);
+            this.btnLoadConfig.TabIndex = 16;
+            this.btnLoadConfig.Text = "重载配置";
+            this.btnLoadConfig.UseVisualStyleBackColor = true;
+            this.btnLoadConfig.Click += new System.EventHandler(this.btnLoadConfig_Click);
+            // 
             // btnWuWaDiff
             // 
             this.btnWuWaDiff.Location = new System.Drawing.Point(274, 287);
             this.btnWuWaDiff.Margin = new System.Windows.Forms.Padding(4);
             this.btnWuWaDiff.Name = "btnWuWaDiff";
-            this.btnWuWaDiff.Size = new System.Drawing.Size(120, 34);
-            this.btnWuWaDiff.TabIndex = 13;
-            this.btnWuWaDiff.Text = "差异计算";
+            this.btnWuWaDiff.Size = new System.Drawing.Size(149, 34);
+            this.btnWuWaDiff.TabIndex = 17;
+            this.btnWuWaDiff.Text = "计算客户端差异";
             this.btnWuWaDiff.UseVisualStyleBackColor = true;
             this.btnWuWaDiff.Click += new System.EventHandler(this.btnWuWaDiff_Click);
             // 
@@ -565,14 +565,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1050, 580);
             this.Controls.Add(this.btnWuWaDiff);
+            this.Controls.Add(this.btnLoadConfig);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.linkLabelReadme);
             this.Controls.Add(this.btnCheckUpdate);
             this.Controls.Add(this.btnScreenShot);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.linkLabelGitee);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.labelTip);
             this.Controls.Add(this.btnSaveConfig);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -610,7 +610,7 @@
         private System.Windows.Forms.Button btnLaunchBilibili;
         private System.Windows.Forms.Button btnLaunchOfficial;
         private System.Windows.Forms.LinkLabel linkLabelGitee;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label labelTip;
         private System.Windows.Forms.Button btnBackupSwitchWegameVersion;
         private System.Windows.Forms.Button btnSwitchWegameVersion;
         private System.Windows.Forms.Button btnBackupSwitchBilibiliVersion;
@@ -621,8 +621,8 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnCheckGame;
         private System.Windows.Forms.LinkLabel btnCheckUpdate;
-        private System.Windows.Forms.LinkLabel linkLabelReadme;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnLoadConfig;
         private System.Windows.Forms.Button btnWuWaDiff;
     }
 }

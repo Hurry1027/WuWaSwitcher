@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using static WuWaSwitcher.Config;
+
 
 namespace WuWaSwitcher {
     public readonly struct ClientType{
@@ -60,10 +53,12 @@ namespace WuWaSwitcher {
         public Config config;
         private ClientType currentClientType = ClientType.Null;
         private string currentSdkVersion = "未知";
-        private string currentGameVersion = "未知";
+        private string currentGameVersion = "未知"; //  始终显示当前游戏版本
+        private ClientType diffCheckedCurrentClientType = ClientType.Null;
+        private string diffCheckedCurrentGameVersion = "未知"; // 检查过游戏版本更新后再同步为当前版本，为未知时需先同步一次当前版本
         // private string aimVersion;
         // private string aimVersionName;
-        
+
         public Form1() {
             //this.Icon = Properties.Resources.icon;
             InitializeComponent();
@@ -73,16 +68,19 @@ namespace WuWaSwitcher {
         }
 
         private async void Form1_Load(object sender, EventArgs e) {
+            InitTipTimer();
             await Task.Run(() => {
                 LoadAndDisplayConfig();
                 CheckCurrentVersion();
                 CheckForUpdate();
+                InitConfigFilesToBackupNetwork();
+                CheckGameVersionUpdate();
             });
         }
 
         private void LaunchCurrentGame() {
             try {
-                if (!CheckGameFolder() || !CheckCurrentVersion()) {
+                if (!CheckGameFolder() || (!CheckCurrentVersion())) { // 触发计算差异则取消启动
                     return;
                 }
                 string launchPath;
@@ -105,6 +103,7 @@ namespace WuWaSwitcher {
                 Process.Start(launchPath);
                 if (checkBox_isAutoClose.Checked) {
                     toolStripStatusLabel1.Text = $"已启动 {currentClientType} 客户端, 2s后关闭切换器...";
+                    statusStrip1.Refresh();
                     System.Threading.Tasks.Task.Delay(2500).ContinueWith(t => {
                         this.BeginInvoke(new Action(() => this.Close()));
                     });
@@ -113,19 +112,29 @@ namespace WuWaSwitcher {
             catch (Exception ex) {
                 MessageBox.Show($"启动 {currentClientType} 失败\n" + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 toolStripStatusLabel1.Text = $"启动 {currentClientType} 失败";
+                statusStrip1.Refresh();
             }
         }
 
         private void SwitchVersion(ClientType aimClientType, bool isBackup) {
             if (!CheckGameFolder()) { return; }
-            bool isCheckCurrentVersion = CheckCurrentVersion(); // 如果未识别则不进行版本判断及备份
+            SaveConfig(); // 保存配置后再操作
+            InitConfigFilesToBackupNetwork(); // 保存完配置要初始化
+
+            bool isCheckCurrentVersion = CheckCurrentVersion();
+            if (CheckGameVersionUpdate()) {
+                MessageBox.Show($"切换操作已取消, 你可以尝试再次切换", "切换操作已取消", MessageBoxButtons.OK, MessageBoxIcon.None);
+                return; //触发计算差异则不切换
+            } 
             if (currentClientType == aimClientType) {
                 toolStripStatusLabel1.Text = $"已切换到 {aimClientType} 版本";
+                statusStrip1.Refresh();
                 return;
             }
 
             // 检查游戏进程和启动器进程是否在运行（批量优化）
             toolStripStatusLabel1.Text = "正在关闭游戏和启动器..";
+            statusStrip1.Refresh();
             List<Utils.ProcessCheckInfo> processesToCheck = new List<Utils.ProcessCheckInfo>();
             
             // 添加游戏进程检查
@@ -201,6 +210,7 @@ namespace WuWaSwitcher {
                 DialogResult result = MessageBox.Show(message.ToString(), "请先关闭游戏", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (result == DialogResult.No) {
                     toolStripStatusLabel1.Text = "版本切换已取消";
+                    statusStrip1.Refresh();
                     return;
                 }
                 
@@ -229,8 +239,10 @@ namespace WuWaSwitcher {
                 // 执行批量终止
                 Utils.KillProcessesBatch(processesToKill);
                 toolStripStatusLabel1.Text = "正在结束游戏进程..";
+                statusStrip1.Refresh();
                 System.Threading.Thread.Sleep(2500);
                 toolStripStatusLabel1.Text = $"正在切换到 {aimClientType} ..";
+                statusStrip1.Refresh();
             }
 
             // 定义变量
@@ -239,52 +251,30 @@ namespace WuWaSwitcher {
             string krsdkPath = Path.Combine(config.GameFolderPath, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland");
             string targetKrsdkConfigPath = Path.Combine(targetPath, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
             
-            // 版本号检测
-            //if (isCheckCurrentVersion) {
-            //    toolStripStatusLabel1.Text = "正在检查版本是否落后..";
-            //    bool isKRsdkVersionChange = false;
-            //    if (File.Exists(targetKrsdkConfigPath)) {
-            //        string json = File.ReadAllText(targetKrsdkConfigPath, Encoding.UTF8);
-            //        var krsdkConfig = ParseKRSDKConfig(json);
-            //        isKRsdkVersionChange = new Version(krsdkConfig.KR_GameVersion) < new Version(currentSdkVersion);
-            //        if (isKRsdkVersionChange) {
-            //            DialogResult result = MessageBox.Show($"目标版本({aimClientType})版本号较旧: {krsdkConfig.KR_GameVersion}\n 当前版本号: {currentSdkVersion}\n修改目标版本号后可能不用重新修复游戏\n是否修改目标版本号并备份当前版本（推荐修改）?", "版本更新提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            //            if (result == DialogResult.Yes) {
-            //                try {
-            //                    System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-            //                    var data = serializer.Deserialize<Dictionary<string, object>>(json);
-            //                    data["KR_GameVersion"] = currentSdkVersion;
-            //                    string updatedJson = serializer.Serialize(data);
-            //                    updatedJson = FormatJson(updatedJson, 2);
-            //                    File.WriteAllText(targetKrsdkConfigPath, updatedJson, new UTF8Encoding(false));
-            //                    toolStripStatusLabel1.Text = $"已更新 {aimClientType} 版本号为: {currentSdkVersion}";
-            //                    isBackup = true;
-            //                }
-            //                catch (Exception ex) {
-            //                    MessageBox.Show("修改版本号失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //                    return;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-            
-
             try {
                 // 备份当前版本
-                if (isCheckCurrentVersion) {
-                    if (!Directory.Exists(currentPath) || (isBackup && Directory.Exists(krsdkPath))) {
-                        if (!BackupCurrentVersion()) {
-                            return;
-                        }
+                // 无备份则强制备份
+                if (!Directory.Exists(currentPath)) {
+                    if (isCheckCurrentVersion == true) {
+                        BackupCurrentVersion();
                     }
                 }
-                    
-                
+                // 参数要求备份
+                if (isBackup) {
+                    bool? backupResult = BackupCurrentVersion();
+                    if (backupResult == null) {
+                        MessageBox.Show($"备份按钮操作已取消 {currentClientType}, 你可以尝试再次备份", "备份已取消", MessageBoxButtons.OK, MessageBoxIcon.None);
+                        return;
+                    }
+                    if (backupResult == false) {
+                        return; // 备份失败终止切换版本
+                    }
+                }
 
                 // 切换到目标版本
                 if (Directory.Exists(targetPath)) {
                     toolStripStatusLabel1.Text = $"正在恢复文件..";
+                    statusStrip1.Refresh();
                     int skippedFiles = 0;
                     int skippedDirs = 0;
                     // 恢复文件
@@ -322,28 +312,37 @@ namespace WuWaSwitcher {
                         skipInfo = string.Format(" (跳过 {0} 个文件, {1} 个目录)", skippedFiles, skippedDirs);
                     }
                     toolStripStatusLabel1.Text = string.Format("已切换到 {0} 版本{1}", aimClientType, skipInfo);
+                    statusStrip1.Refresh();
 
                     // 更新当前版本信息
                     CheckCurrentVersion();
-
+                    CheckGameVersionUpdate();
                     // 启动游戏
                     //LaunchCurrentGame();
                 }
                 else {
-                    MessageBox.Show($"未找到 {aimClientType} 的备份\n请手动启动 {aimClientType} 并修复游戏\n然后再使用此程序备份 {aimClientType}\n(官服->WeGame请参考Readme.md使用说明)", "提示", MessageBoxButtons.OK, MessageBoxIcon.None);
+                    MessageBox.Show($"{aimClientType} 还未完成备份\n请手动启动 {aimClientType} 并修复游戏\n然后再使用此程序进行备份 {aimClientType}\n(官服->WeGame手动切换请参考项目主页使用说明)", "手动切换提示", MessageBoxButtons.OK, MessageBoxIcon.None);
                     toolStripStatusLabel1.Text = $"切换到 {aimClientType} 失败";
+                    statusStrip1.Refresh();
                 }
             }
             catch (Exception ex) {
                 CheckCurrentVersion();
-                MessageBox.Show("切换客户端失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CheckGameVersionUpdate();
                 toolStripStatusLabel1.Text = $"切换到 {aimClientType} 失败";
+                statusStrip1.Refresh();
+                MessageBox.Show("切换客户端失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private bool BackupCurrentVersion() {
+        // null表示中断操作
+        private bool? BackupCurrentVersion() {
             try {
                 if (!CheckGameFolder() || !CheckCurrentVersion()) { return false; }
+                if (CheckGameVersionUpdate()) { return null; }  // 触发计算差异中断操作
+                SaveConfig();                       // 保存配置后再操作
+                InitConfigFilesToBackupNetwork();   // 初始化备份配置
+
                 int skipFileNum = 0;
                 int skipFolderNum = 0;
                 // 备份目录的根目录
@@ -351,6 +350,9 @@ namespace WuWaSwitcher {
                     MessageBox.Show($"未识别客户端", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
+                toolStripStatusLabel1.Text = $"正在备份 {currentClientType}...";
+                statusStrip1.Refresh();
+
                 string rootBackupPath = currentClientType;
 
                 // 清空旧备份，保证目录干净
@@ -391,13 +393,47 @@ namespace WuWaSwitcher {
                 if (skipFolderNum > 0) { skipParts.Add($"{skipFolderNum} 个目录"); }
                 if (skipParts.Count > 0) { skipTipStr = " " + string.Join("、", skipParts) + "不存在"; }
                 toolStripStatusLabel1.Text = "已备份 " + currentClientType + " 版本 (大小: " + Utils.FormatFileSize(backupSize) + ")"+skipTipStr;
+                statusStrip1.Refresh();
                 return true;
             }
             catch (Exception ex) {
                 toolStripStatusLabel1.Text = $"备份当前版本 {currentClientType} 失败: ";
+                statusStrip1.Refresh();
                 MessageBox.Show($"备份当前版本 {currentClientType} 失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
+        }
+
+
+        // 循环小提示
+        private readonly string[] _tips = new[]
+        {
+            "[客户端更新后] 版本号变化后记得[备份当前客户端]并[计算客户端差异]",
+            "[提示修复游戏] 尝试双击版本号修改为上一个小版本(3.6.1->3.6.0)然后重启客户端",
+            "[切换器失效] 打开项目主页可查看[最新公告]及[使用说明]，有问题可提交issue或B站私信",
+            "[游戏包体下载] 本程序不下载游戏资源，使用启动器修复游戏更加稳定",
+            "[鸣潮帧率翻倍] 打开NVIDIA APP的AI插帧并在NVIDIA APP启动一次鸣潮(刚启动会卡一会)",
+            "[限制游戏帧率] 在NVIDIA APP设置限制帧率(有时需要设置为目标帧率的一半)"
+        };
+        private int _tipIndex;
+        private System.Windows.Forms.Timer _tipTimer;
+
+        private void InitTipTimer() {
+            if (_tips.Length == 0) return;
+
+            _tipTimer = new System.Windows.Forms.Timer { Interval = 5000 };
+            _tipTimer.Tick += (s, e) =>
+            {
+                _tipIndex = (_tipIndex + 1) % _tips.Length;
+                labelTip.Text = _tips[_tipIndex];
+            };
+
+            _tipIndex = 0;
+            labelTip.Text = _tips[0];
+            _tipTimer.Start();
+
+            labelTip.MouseEnter += (s, e) => _tipTimer.Stop();   // 暂停，文本保持
+            labelTip.MouseLeave += (s, e) => _tipTimer.Start();  // 恢复
         }
     }
 }  

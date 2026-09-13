@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace WuWaSwitcher {
     public class Config {
         public Config() {
-            this.ConfigVersion = "1.2.0";
+            this.ConfigVersion = "1.3.0";
             this.IgnoredVersion = "";
             this.Client_launch_paths = new ClientPaths();
             this.DirectoriesToBackup = new string[] {
@@ -128,7 +125,7 @@ namespace WuWaSwitcher {
             };
         }
 
-        // 获取sdk版本号
+        // 从备份中获取sdk版本号
         public static string getKrSdkVersion(ClientType clientType) {
             string krsdkConfigPath = Path.Combine(clientType.ToString(), "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
             // 检查SDK配置文件是否存在
@@ -138,6 +135,15 @@ namespace WuWaSwitcher {
             string json = File.ReadAllText(krsdkConfigPath, Encoding.UTF8);
             var krsdkConfig = ParseKRSDKConfig(json);
             return krsdkConfig.KR_GameVersion;
+        }
+
+
+        // 备份文件夹识别结果
+        public class BackupFolderCheckResult {
+            public ClientType clientType { get; set; }
+            public string gameVersion { get; set; }
+            public string sdkVersion { get; set; }
+            public bool isLocalGameResourcesExists { get; set; }
         }
 
         [DataMember]
