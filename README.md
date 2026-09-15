@@ -1,19 +1,29 @@
 # WuWaSwitcher
 
 WuWaSwitcher 是一个用于切换《鸣潮》游戏客户端版本的便捷工具，\
-支持在 Bilibili 客户端、官方客户端、WeGame客户端之间快速切换，\
+支持在 `官方客户端`、`Bilibili 客户端`、`WeGame客户端`之间快速切换，\
 各客户端共用同一个游戏文件夹，以达到节省硬盘空间的目的。\
-原理是对游戏的KrPcSdk\_Mainland文件夹及客户端差异文件进行备份和恢复。
+原理是对游戏的KrPcSdk\_Mainland文件夹及客户端差异文件进行备份和恢复。\
+B站视频页：[B站视频页](https://www.bilibili.com/video/BV1RVimB1EbB) （点赞评论支持下~有问题可私信）
 
 ## 近期公告
 
-### **2026.9.11 鸣潮3.6.1版本B服更新**
+### **2026.9.15 鸣潮官服3.6.1版本更新,已与B服同步**
 
-当前版本 (2026.09.11 12:00:00):
+当前版本 (2026.09.15 12:00:00):\
+`官方客户端3.6.1(SDK3.6.1)`\
+`Bilibili客户端3.6.1(SDK3.6.1)`\
+官服B服WeGame都已更新到3.6.1版本\
+计算差异后需要备份的文件仅KrPcSdk\_Mainland文件夹(单端900MB)\
+config.json的"filesToBackup"下仅需保留两项:\
+"launcherDownloadConfig.json", "LocalGameResources.json"\
+(可以参考项目主页的 `最新版config.json` 对切换器目录的config.json进行设置)
 
+### **2026.9.11 鸣潮B服3.6.1版本更新**
+
+版本 (2026.09.11 12:00:00):\
 `官方客户端3.6.0(SDK3.6.0)`\
-`Bilibili客户端3.6.1(SDK3.6.1)`
-
+`Bilibili客户端3.6.1(SDK3.6.1)`\
 新增差异清单项（添加到config.json"filesToBackup"下）:\
 切换器1.3.0版本压缩包内默认配置文件已添加，就不要再加了\
 "Client/Binaries/Win64/AntiCheatExpert/ACE-Base64.dll",\
@@ -38,7 +48,7 @@ WuWaSwitcher 是一个用于切换《鸣潮》游戏客户端版本的便捷工�
 ### 1. 下载
 
 1. 注意不是点`克隆/下载`，请点击仓库主界面右边侧边栏`发行版`下的`鸣潮官服B服WeGame切换器x.x.x`进行下载（[WuWaSwitcher 发行版](https://gitee.com/wn1027/wuwa-switcher/releases) ）。
-2. 下载后找个空地方解压到此位置，配置文件和备份文件都将保存exe所在目录下。
+2. 下载后找个空文件夹(预留10GB空间)解压到此位置，配置文件和备份文件都将保存exe所在目录下。
 3. 运行exe文件即可。
 4. 更新说明及升级方式请看版本描述，一般覆盖exe文件就可以了。
 5. **关于问题及反馈，B站很可能吞评论(评论后视频评论数无变化)，你可以在此页面提交issue**。
