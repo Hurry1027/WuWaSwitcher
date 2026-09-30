@@ -8,6 +8,16 @@ B站视频页：[B站视频页](https://www.bilibili.com/video/BV1RVimB1EbB) （
 
 ## 近期公告
 
+### **2026.9.30 鸣潮官服3.7.0版本更新**
+当前版本 (2026.09.30 10:30:00):\
+`官方客户端3.7.0(SDK3.7.0)`\
+`Bilibili客户端3.7.0(SDK3.7.0)`\
+对于默认`高清包体`经网络计算差异后需要备份的文件仅KrPcSdk\_Mainland文件夹(单端900MB)\
+备份配置与上个版本3.6.1版本完全相同，无需更新配置\
+**切换前记得备份当前客户端。切换完成后请双击切换器界面绿色的版本号，修改launcherDownloadConfig.json中的版本号为3.7.0，然后再启动客户端，可避免重新下载25GB的更新。等待修复游戏检查完成且再次备份后即可顺利切换**
+
+**本人没有新客户端测试资格，如果新客户端`精简`或`极致`包体切换有问题，请B站私信我或提交issue**
+
 ### **2026.9.15 鸣潮官服3.6.1版本更新,已与B服同步**
 
 当前版本 (2026.09.15 12:00:00):\
@@ -18,21 +28,6 @@ B站视频页：[B站视频页](https://www.bilibili.com/video/BV1RVimB1EbB) （
 config.json的"filesToBackup"下仅需保留两项:\
 "launcherDownloadConfig.json", "LocalGameResources.json"\
 (可以参考项目主页的 `最新版config.json` 对切换器目录的config.json进行设置)
-
-### **2026.9.11 鸣潮B服3.6.1版本更新**
-
-版本 (2026.09.11 12:00:00):\
-`官方客户端3.6.0(SDK3.6.0)`\
-`Bilibili客户端3.6.1(SDK3.6.1)`\
-新增差异清单项（添加到config.json"filesToBackup"下）:\
-切换器1.3.0版本压缩包内默认配置文件已添加，就不要再加了\
-"Client/Binaries/Win64/AntiCheatExpert/ACE-Base64.dll",\
-"Client/Binaries/Win64/AntiCheatExpert/ACE-IDS64.dll",
-
-### **2026.8.20 鸣潮3.6.0版本与3.5.3版本差异文件路径完全相同**
-
-请按照切换器(1.2.3版本)压缩包内`参考config.json`修改`切换器所在目录\config.json`，添加所需备份文件路径。\
-具体来说，复制填入`"filesToBackup"`字段即可，**记得在版本转换前备份当前客户端**，各客户端都备份后可以顺利切换。
 
 ## 功能特性
 
