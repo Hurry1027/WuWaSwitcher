@@ -1,8 +1,8 @@
 {
-    "!Tip1": "2026.10.11 适用于鸣潮官方3.7.0新启动器、B服3.7.0旧启动器",
-    "!Tip2":"适用于切换器1.3.1版本",
+    "!Tip1":"2026.9.30 10:30:00 适用于鸣潮官方3.7.0版本、B服3.7.0版本",
+    "!Tip2":"适用于切换器1.3.0、1.3.1版本",
     "!Tip3":"复制此文件内容到切换器目录的config.json",
-    "configVersion": "1.3.1",
+    "configVersion": "1.3.0",
     "gameFolderPath": "",
     "isAutoCloseSwitcher": false,
     "ignoredVersion": "1.1.0",
@@ -12,8 +12,6 @@
         "WeGame": ""
     },
     "directoriesToBackup": [
-        "launcherDownloadConfig",
-        "launcherDownload",
         "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland"
     ],
     "filesToBackup": [

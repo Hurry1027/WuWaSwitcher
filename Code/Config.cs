@@ -8,12 +8,10 @@ using System.Text;
 namespace WuWaSwitcher {
     public class Config {
         public Config() {
-            this.ConfigVersion = "1.3.1";
+            this.ConfigVersion = "1.3.0";
             this.IgnoredVersion = "";
             this.Client_launch_paths = new ClientPaths();
             this.DirectoriesToBackup = new string[] {
-                "launcherDownloadConfig",
-                "launcherDownload",
                 "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland"
             };
             this.FilesToBackup = new string[] {};
