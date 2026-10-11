@@ -22,13 +22,13 @@ namespace WuWaSwitcher {
                 message += "\n1.3.0 增加对launcherDownloadConfig.json和LocalGameResources.json的备份";
             }
 
-            //if (string.IsNullOrEmpty(config.ConfigVersion) || IsOlderVersion(config.ConfigVersion, "1.3.1")) {
-            //    UpdateConfigToVersion1_3_1(config);
-            //    isUpdated = true;
-            //    message += "\n1.3.1 增加对新启动器launcherDownloadConfig和launcherDownload文件夹的备份";
-            //}
+            if (string.IsNullOrEmpty(config.ConfigVersion) || IsOlderVersion(config.ConfigVersion, "1.3.1")) {
+                UpdateConfigToVersion1_3_1(config);
+                isUpdated = true;
+                message += "\n1.3.1 增加对新启动器launcherDownloadConfig文件夹的备份";
+            }
 
-            
+
 
             // 可以在这里添加更多版本更新逻辑
             // if (IsOlderVersion(config.configVersion, "1.2.0"))
@@ -90,16 +90,13 @@ namespace WuWaSwitcher {
             config.ConfigVersion = "1.3.0";
         }
 
-        //private void UpdateConfigToVersion1_3_1(Config config) {
-        //    if (config.FilesToBackup != null) {
-        //        if (!config.DirectoriesToBackup.Contains("launcherDownload")) {
-        //            config.DirectoriesToBackup = new[] { "launcherDownload" }.Concat(config.DirectoriesToBackup).ToArray();
-        //        }
-        //        if (!config.DirectoriesToBackup.Contains("launcherDownloadConfig")) {
-        //            config.DirectoriesToBackup = new[] { "launcherDownloadConfig" }.Concat(config.DirectoriesToBackup).ToArray();
-        //        }
-        //    }
-        //    config.ConfigVersion = "1.3.1";
-        //}
+        private void UpdateConfigToVersion1_3_1(Config config) {
+            if (config.DirectoriesToBackup != null) {
+                if (!config.DirectoriesToBackup.Contains("launcherDownloadConfig")) {
+                    config.DirectoriesToBackup = new[] { "launcherDownloadConfig" }.Concat(config.DirectoriesToBackup).ToArray();
+                }
+            }
+            config.ConfigVersion = "1.3.1";
+        }
     }
 }
