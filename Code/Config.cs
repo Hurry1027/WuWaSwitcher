@@ -114,15 +114,14 @@ namespace WuWaSwitcher {
 
         public static LauncherConfig ParseLauncherConfig(string json) {
             System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-            var data = serializer.Deserialize<Dictionary<string, object>>(json);
-
-            return new LauncherConfig {
-                Version = data["version"]?.ToString() ?? "",
-                ReUseVersion = data["reUseVersion"]?.ToString() ?? "",
-                State = data["state"]?.ToString() ?? "",
-                IsPreDownload = data.ContainsKey("isPreDownload") && data["isPreDownload"] is bool ? (bool)data["isPreDownload"] : false,
-                AppId = data["appId"]?.ToString() ?? ""
-            };
+            var cfg = serializer.Deserialize<LauncherConfig>(json);
+            if (cfg.Bundles == null)
+                cfg.Bundles = new Dictionary<string, BundleConfig>();
+            cfg.Version = cfg.Version ?? "";
+            cfg.ReUseVersion = cfg.ReUseVersion ?? "";
+            cfg.State = cfg.State ?? "";
+            cfg.AppId = cfg.AppId ?? "";
+            return cfg;
         }
 
         // 从备份中获取sdk版本号
@@ -181,17 +180,37 @@ namespace WuWaSwitcher {
             public string KR_ChannelId { get; set; }
         }
 
+        [DataContract]
         public class LauncherConfig {
-            [DataMember]
-            public string Version { get; set; }
-            [DataMember]
-            public string ReUseVersion { get; set; }
-            [DataMember]
-            public string State { get; set; }
-            [DataMember]
-            public bool IsPreDownload { get; set; }
-            [DataMember]
-            public string AppId { get; set; }
+            [DataMember(Name = "version")]
+            public string Version { get; set; } = "";
+
+            [DataMember(Name = "reUseVersion")]
+            public string ReUseVersion { get; set; } = "";
+
+            [DataMember(Name = "state")]
+            public string State { get; set; } = "";
+
+            [DataMember(Name = "isPreDownload")]
+            public bool IsPreDownload { get; set; } = false;
+
+            [DataMember(Name = "appId")]
+            public string AppId { get; set; } = "";
+
+            [DataMember(Name = "bundles")]
+            public Dictionary<string, BundleConfig> Bundles { get; set; } = new Dictionary<string, BundleConfig>();
+        }
+
+        [DataContract]
+        public class BundleConfig {
+            [DataMember(Name = "version")]
+            public string Version { get; set; } = "";
+
+            [DataMember(Name = "state")]
+            public string State { get; set; } = "";
+
+            [DataMember(Name = "resourcePacks")]
+            public List<string> ResourcePacks { get; set; } = new List<string>();
         }
     }
 }

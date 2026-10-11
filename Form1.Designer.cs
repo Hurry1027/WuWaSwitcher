@@ -581,7 +581,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "鸣潮官服B服WeGame切换器1.3.0";
+            this.Text = "鸣潮官服B服WeGame切换器1.3.1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
