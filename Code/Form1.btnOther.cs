@@ -413,12 +413,16 @@ namespace WuWaSwitcher {
         private void lblCurrentVersion_DoubleClick(object sender, EventArgs e) {
             try {
                 string launcherDownloadConfigPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig.json");
-                if (File.Exists(launcherDownloadConfigPath)) {
+                string launcherDownloadConfigCommonPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig/common.json");
+                if (File.Exists(launcherDownloadConfigCommonPath)){
+                    Process.Start(launcherDownloadConfigCommonPath);
+                    toolStripStatusLabel1.Text = "已打开launcherDownloadConfig/common.json";
+                }else if (File.Exists(launcherDownloadConfigPath)) {
                     Process.Start(launcherDownloadConfigPath);
                     toolStripStatusLabel1.Text = "已打开launcherDownloadConfig.json文件";
                 } else {
                     //MessageBox.Show("launcherDownloadConfig.json文件不存在\n" + launcherDownloadConfigPath, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    toolStripStatusLabel1.Text = "launcherDownloadConfig.json文件不存在";
+                    toolStripStatusLabel1.Text = "common.json和launcherDownloadConfig.json文件不存在";
                 }
             } catch (Exception ex) {
                 MessageBox.Show("打开文件失败: " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
