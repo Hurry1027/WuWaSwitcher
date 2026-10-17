@@ -113,6 +113,7 @@ namespace WuWaSwitcher {
             };
         }
 
+        // 旧版客户端LauncherConfig
         public static LauncherConfig ParseLauncherConfig(string json) {
             System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             var cfg = serializer.Deserialize<LauncherConfig>(json);
@@ -124,6 +125,14 @@ namespace WuWaSwitcher {
             cfg.AppId = cfg.AppId ?? "";
             return cfg;
         }
+
+        // 新版客户端LauncherConfig/common.json
+        public static LauncherPackConfig ParseLauncherPackConfig(string json) {
+            System.Web.Script.Serialization.JavaScriptSerializer serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            var cfg = serializer.Deserialize<LauncherPackConfig>(json);
+            return cfg;
+        }
+
 
         // 从备份中获取sdk版本号
         public static string getKrSdkVersion(ClientType clientType) {
@@ -200,6 +209,15 @@ namespace WuWaSwitcher {
 
             [DataMember(Name = "bundles")]
             public Dictionary<string, BundleConfig> Bundles { get; set; } = new Dictionary<string, BundleConfig>();
+        }
+
+        [DataContract]
+        public class LauncherPackConfig {
+            [DataMember(Name = "packName")]
+            public string PackName { get; set; } = null;
+
+            [DataMember(Name = "version")]
+            public string Version { get; set; } = null;
         }
 
         [DataContract]

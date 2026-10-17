@@ -159,6 +159,8 @@ namespace WuWaSwitcher {
 
                 string krsdkConfigPath = Path.Combine(txtGameFolderPath.Text, "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
                 string launcherDownloadConfigPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig.json");
+                string launcherDownloadConfigCommonPath = Path.Combine(txtGameFolderPath.Text, "launcherDownloadConfig/common.json");
+                
                 // 检查SDK配置文件是否存在
                 if (!File.Exists(krsdkConfigPath)) {
                     lblCurrentVersion.Text = "未识别客户端(SDK版本识别失败)";
@@ -168,14 +170,20 @@ namespace WuWaSwitcher {
                     return false;
                 }
                 // 检查launcherDownloadConfig.json, 读取版本号
-                if (File.Exists(launcherDownloadConfigPath)) {
+                if (File.Exists(launcherDownloadConfigCommonPath)) {
+                    string commonJson = File.ReadAllText(launcherDownloadConfigCommonPath, Encoding.UTF8);
+                    var commonJsonConfig = Config.ParseLauncherPackConfig(commonJson);
+                    currentGameVersion = string.IsNullOrEmpty(commonJsonConfig?.Version) ? "未知": commonJsonConfig.Version;
+
+                }
+                else if (File.Exists(launcherDownloadConfigPath)) {
                     string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
                     var launcherConfig = Config.ParseLauncherConfig(launcherJson);
                     currentGameVersion = launcherConfig.Version;
-                }
-                else {
+                }else {
                     currentGameVersion = "未知";
                 }
+
                 // 识别SDK渠道ID
                 string json = File.ReadAllText(krsdkConfigPath, Encoding.UTF8);
                 var krsdkConfig = Config.ParseKRSDKConfig(json);
