@@ -402,15 +402,37 @@ namespace WuWaSwitcher
             },
         };
 
+        private static Dictionary<ClientType, ResourceIndexApiUrl> ResourceIndexApiMap2 = new Dictionary<ClientType, ResourceIndexApiUrl> {
+            [ClientType.Official] = new ResourceIndexApiUrl {
+                url = "https://prod-cn-alicdn-gamestarter.kurogame.com/launcher/game/10003_oLNgHF1CESo51DGHN2odtp40e3oI1HfZ/G152/official/index.json",
+                appId = "10003"
+            },
+            [ClientType.Bilibili] = new ResourceIndexApiUrl {
+                url = "https://prod-cn-alicdn-gamestarter.kurogame.com/launcher/game/10004_IY6xmlAusbImBjWrpPj1OwNuirXEO44x/G152/bilibili/index.json",
+                appId = "10004"
+            },
+            [ClientType.WeGame] = new ResourceIndexApiUrl {
+                url = "https://prod-cn-alicdn-gamestarter.kurogame.com/launcher/game/10003_oLNgHF1CESo51DGHN2odtp40e3oI1HfZ/G152/official/index.json",
+                appId = "10003"
+            },
+        };
 
-        private static dynamic GetResourceIndex(ClientType clientType) {
+
+        private static dynamic GetResourceIndex(ClientType clientType, int ver = 2) {
             try {
                 using (WebClient client = new WebClient()) {
                     JavaScriptSerializer serializer = new JavaScriptSerializer();
                     serializer.MaxJsonLength = int.MaxValue;
                     client.Headers.Add("User-Agent", "WuWaSwitcher");
                     client.Encoding = System.Text.Encoding.UTF8;
-                    byte[] data = client.DownloadData(ResourceIndexApiMap[clientType].url);
+                    byte[] data = null;
+                    if (ver == 1) {
+                        data = client.DownloadData(ResourceIndexApiMap[clientType].url);
+                    }
+                    else if (ver == 2) { 
+                        data = client.DownloadData(ResourceIndexApiMap2[clientType].url);
+                    }
+                    if (data == null) { return null; }
                     string jsonResponse;
                     string contentEncoding = client.ResponseHeaders["Content-Encoding"];
                     if (!string.IsNullOrEmpty(contentEncoding) &&
@@ -441,7 +463,7 @@ namespace WuWaSwitcher
             }
         }
 
-        private static Dictionary<string, ResourceItem> GetLatestResourceManifest(ClientType clientType) {
+        private static Dictionary<string, ResourceItem> GetLatestResourceManifest(ClientType clientType, int ver = 2) {
             try {
                 using (WebClient client = new WebClient()) {
                     JavaScriptSerializer serializer = new JavaScriptSerializer();
@@ -449,8 +471,16 @@ namespace WuWaSwitcher
                     // 解析资源json地址
                     dynamic ResourceIndexInfo = GetResourceIndex(clientType);
                     if (ResourceIndexInfo == null) { return null; }
-                    string cdn_host_url = ResourceIndexInfo["default"]["cdnList"][0]["url"];
-                    string resources = ResourceIndexInfo["default"]["resources"];
+                    string cdn_host_url = null;
+                    string resources = null;
+                    if (ver == 1) {
+                        cdn_host_url = ResourceIndexInfo["default"]["cdnList"][0]["url"];
+                        resources = ResourceIndexInfo["default"]["resources"];
+                    }
+                    else if (ver == 2) {
+                        cdn_host_url = ResourceIndexInfo["cdnList"][0]["url"];
+                        resources = ResourceIndexInfo["resourcePacks"]["common"]["indexFile"];
+                    }
                     string resources_url = cdn_host_url + resources;
                     // 请求资源json
                     string jsonResponse = client.DownloadString(resources_url);

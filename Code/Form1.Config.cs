@@ -174,7 +174,6 @@ namespace WuWaSwitcher {
                     string commonJson = File.ReadAllText(launcherDownloadConfigCommonPath, Encoding.UTF8);
                     var commonJsonConfig = Config.ParseLauncherPackConfig(commonJson);
                     currentGameVersion = string.IsNullOrEmpty(commonJsonConfig?.Version) ? "未知": commonJsonConfig.Version;
-
                 }
                 else if (File.Exists(launcherDownloadConfigPath)) {
                     string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
@@ -224,7 +223,6 @@ namespace WuWaSwitcher {
             }
         }
 
-
         public void InitConfigFilesToBackupNetwork() {
             // 版本号读取成功后如果备份文件为空则从网络初始化备份配置
             if (CheckCurrentVersion() && config.FilesToBackup.Length == 0) {
@@ -267,10 +265,15 @@ namespace WuWaSwitcher {
             string backupFolderPath = Path.Combine(clientType.ToString());
             string krsdkConfigPath = Path.Combine(clientType.ToString(), "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
             string launcherDownloadConfigPath = Path.Combine(clientType.ToString(), "launcherDownloadConfig.json");
+            string launcherDownloadConfigCommonPath = Path.Combine(clientType.ToString(), "launcherDownloadConfig/common.json");
             string LocalGameResourcesPath = Path.Combine(clientType.ToString(), "LocalGameResources.json");
 
             string gameVersion = "未知";
-            if (File.Exists(launcherDownloadConfigPath)) {
+            if (File.Exists(launcherDownloadConfigCommonPath)) {
+                string commonJson = File.ReadAllText(launcherDownloadConfigCommonPath, Encoding.UTF8);
+                var commonJsonConfig = Config.ParseLauncherPackConfig(commonJson);
+                gameVersion = string.IsNullOrEmpty(commonJsonConfig?.Version) ? "未知" : commonJsonConfig.Version;
+            }else if (File.Exists(launcherDownloadConfigPath)) {
                 string launcherJson = File.ReadAllText(launcherDownloadConfigPath, Encoding.UTF8);
                 var launcherConfig = Config.ParseLauncherConfig(launcherJson);
                 gameVersion = launcherConfig.Version;
