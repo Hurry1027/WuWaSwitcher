@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static WuWaSwitcher.Config;
 
 
 namespace WuWaSwitcher {
@@ -277,8 +278,26 @@ namespace WuWaSwitcher {
                     statusStrip1.Refresh();
                     int skippedFiles = 0;
                     int skippedDirs = 0;
+                    BackupFolderCheckResult aimClientCheckRes = CheckBackupFolderVersion(aimClientType);
+
+                    var oldParts = aimClientCheckRes.gameVersion.Trim().Split('.');
+                    var newParts = currentGameVersion.Trim().Split('.');
+                    bool isSameMajor = true;
+                    if (oldParts.Length < 2 || newParts.Length < 2) {
+                        isSameMajor = true; // currentGameVersion可能是未知
+                    }
+                    else {
+                        isSameMajor = oldParts[0] == newParts[0] && oldParts[1] == newParts[1];
+                    }
+                    if (!isSameMajor) {
+                        MessageBox.Show($"当前版本: {currentClientType} {currentGameVersion}\n备份版本: {aimClientType} {aimClientCheckRes.gameVersion}\n检测到备份版本与当前版本不同，可能是你已进行大版本更新\n\n此次切换不替换launcherDownloadConfig, 切换器显示的鸣潮版本号不会改变\n\n本次切换将正常进行，然后请启动客户端修复一次游戏并备份", "鸣潮版本更新提示", MessageBoxButtons.OK, MessageBoxIcon.None);
+                    }
+
                     // 恢复文件
                     foreach (string fileName in config.FilesToBackup) {
+                        if (!isSameMajor && fileName == "launcherDownloadConfig.json") {
+                            continue; // 大版本更新不切换launcherDownloadConfig
+                        }
                         string sourceFile = Path.Combine(targetPath, fileName);
                         string destFile = Path.Combine(config.GameFolderPath, fileName);
                         if (File.Exists(sourceFile)) {
@@ -292,6 +311,9 @@ namespace WuWaSwitcher {
                     
                     // 恢复目录
                     foreach (string dirName in config.DirectoriesToBackup) {
+                        if (!isSameMajor && dirName == "launcherDownloadConfig") {
+                            continue; // 大版本更新不切换launcherDownloadConfig
+                        }
                         string sourceDir = Path.Combine(targetPath, dirName);
                         string destDir = Path.Combine(config.GameFolderPath, dirName);
                         
