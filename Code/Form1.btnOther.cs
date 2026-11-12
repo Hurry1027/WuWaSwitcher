@@ -127,9 +127,9 @@ namespace WuWaSwitcher {
                     "对比客户端差异重新选定备份文件路径，并更新配置文件。\n" +
                     "可选择 [网络] 或 [本地] 两种模式获取游戏资源列表\n\n"+
                     "[在什么情况下使用]\n" +
-                    "一般在客户端小版本更新完，发现切换版本总是需要修复游戏时使用\n" +
-                    "如果网络模式下计算出的备份配置失效，可以采用本地模式\n\n" +
-                    "请选择模式：\n\n是 = (优先)网络拉取最新资源列表对比差异\n否 = (保底)使用本地LocalGameResources.json对比差异\n取消 = 取消操作",
+                    "一般在客户端版本更新完，发现切换版本总是需要修复游戏时使用\n" +
+                    "请优先选择 \"是\" 从网络获取并对比差异\n\n" +
+                    "请选择模式：\n\n是 = (优先)网络拉取最新资源列表对比差异\n否 = 使用本地LocalGameResources.json对比差异\n取消 = 取消操作",
                     "计算客户端差异",
                     MessageBoxButtons.YesNoCancel,   // 是 / 否 / 取消
                     MessageBoxIcon.Question);
@@ -271,8 +271,18 @@ namespace WuWaSwitcher {
                 ResourceDiff.DiffResult o_b = null;
                 ResourceDiff.DiffResult o_w = null;
                 ResourceDiff.DiffResult b_w = null;
+                string officialDownloadPrefix = null;
+                string bilibiliDownloadPrefix = null;
+                string wegameDownloadPrefix = null;
+                string official_remote_ver = null;
+                string bilibili_remote_ver = null;
+                string wegame_remote_ver = null;
                 if (mode == ResourceDiff.Mode.NetWork) {
                     o_b = ResourceDiff.Compare(ClientType.Official, ClientType.Bilibili, mode);
+                    officialDownloadPrefix = o_b.ADownloadPrefix;
+                    bilibiliDownloadPrefix = o_b.BDownloadPrefix;
+                    official_remote_ver = o_b.AVersion;
+                    bilibili_remote_ver = o_b.BVersion;
                 }
                 else {
                     CheckCanWuWaDiffResult checkRes = checkCanWuWaDiffLocal();
@@ -319,12 +329,14 @@ namespace WuWaSwitcher {
                                 result = DialogResult.No;
                             }
                         }
-                        
                     }
                     else {
                         if (isTip) {
                             MessageBox.Show("计算客户端差异完成:\n" + msg + "\n备份配置列表与当前配置相同,无需更新", $"计算客户端差异({modeStr})");
                         }
+                        // var (officialDownloadList, bilibiliDownloadList) = ResourceDiff.getFileToDownload(o_b);
+                        // ResourceDiff.checkAndDownloadDiff(officialDownloadList, bilibiliDownloadList, official_remote_ver, bilibili_remote_ver
+                        //     , officialDownloadPrefix, bilibiliDownloadPrefix);
                         toolStripStatusLabel1.Text += " 一致无需覆盖";
                         statusStrip1.Refresh();
                     }

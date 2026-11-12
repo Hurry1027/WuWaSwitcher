@@ -83,11 +83,27 @@ namespace WuWaSwitcher
             public List<ResourceDiffItem> BOnly { get; set; }
             public List<ResourceReplaceItem> NeedReplace { get; set; }
             public SwitchPlans SwitchPlans { get; set; }
+            public string ADownloadPrefix { get; set; }
+            public string BDownloadPrefix { get; set; }
+            public string AVersion { get; set; }
+            public string BVersion { get; set; }
         }
 
         public class ReplaceFileList {
             public string Dest { get; set; }
             public long Size { get; set; }
+        }
+
+        private sealed class ResourceManifest {
+            public Dictionary<string, ResourceItem> Map { get; }
+            public string DownloadPrefix { get; }
+            public string Version { get;}
+
+            public ResourceManifest(Dictionary<string, ResourceItem> map, string downloadPrefix, string version) {
+                Map = map;
+                DownloadPrefix = downloadPrefix;
+                Version = version;
+            }
         }
 
         #endregion
@@ -96,10 +112,20 @@ namespace WuWaSwitcher
         public static DiffResult Compare(ClientType clientType1, ClientType clientType2, Mode mode = Mode.NetWork) {
             Dictionary<string, ResourceItem> officialMap;
             Dictionary<string, ResourceItem> bServerMap;
+            string officialDownloadPrefix = null;
+            string bilibiliDownloadPrefix = null;
+            string officialVersion = null;
+            string bilibiliVersion = null;
             Console.WriteLine("正在加载资源文件...");
             if (mode == Mode.NetWork) {
-                officialMap = GetLatestResourceManifest(clientType1);
-                bServerMap = GetLatestResourceManifest(clientType2);
+                var manifest = GetLatestResourceManifest(clientType1);
+                officialMap = manifest.Map;
+                officialDownloadPrefix = manifest.DownloadPrefix;
+                officialVersion = manifest.Version;
+                manifest = GetLatestResourceManifest(clientType2);
+                bServerMap = manifest.Map;
+                bilibiliDownloadPrefix = manifest.DownloadPrefix;
+                bilibiliVersion = manifest.Version;
             }
             else {
                 if (!Directory.Exists(Path.Combine(clientType1.ToString()))) {
@@ -142,7 +168,11 @@ namespace WuWaSwitcher
                 SwitchPlans = new SwitchPlans {
                     AToB = BuildSwitchPlan(diff, true, clientType1, clientType2),
                     BToA = BuildSwitchPlan(diff, false, clientType1, clientType2)
-                }
+                },
+                ADownloadPrefix = officialDownloadPrefix,
+                BDownloadPrefix= bilibiliDownloadPrefix,
+                AVersion = officialVersion,
+                BVersion = bilibiliVersion
             };
 
             string json = SerializeResult(result);
@@ -183,6 +213,60 @@ namespace WuWaSwitcher
             }));
             return list;
         }
+
+        // 获取所需下载文件列表
+        public static (List<ReplaceFileList>, List<ReplaceFileList>) getFileToDownload(DiffResult d1) {
+            if (d1 == null) return (new List<ReplaceFileList>(), new List<ReplaceFileList>());
+            List<ReplaceFileList> listA = new List<ReplaceFileList>();
+            List<ReplaceFileList> listB = new List<ReplaceFileList>();
+            listA.AddRange(d1.AOnly.Select(b => new ReplaceFileList { Dest = b.Dest, Size = b.Size }));
+            listB.AddRange(d1.BOnly.Select(b => new ReplaceFileList { Dest = b.Dest, Size = b.Size }));
+            listA.AddRange(d1.NeedReplace.Select(b => new ReplaceFileList {
+                Dest = b.Dest,
+                Size = Math.Max(b.ASize, b.BSize)
+            }));
+            listB.AddRange(d1.NeedReplace.Select(b => new ReplaceFileList {
+                Dest = b.Dest,
+                Size = Math.Max(b.ASize, b.BSize)
+            }));
+            return (listA, listB);
+        }
+
+
+        // 检查所有备份并下载差异文件
+        public async static void checkAndDownloadDiff(
+            List<ReplaceFileList> officialDownloadList, 
+            List<ReplaceFileList> bilibiliDownloadList,
+            string offical_remote_ver,
+            string bilibili_remote_ver,
+            string officalDownloadPrefix,
+            string bilibiliDownloadPrefix,
+            bool isForce = false
+            ) {
+            try {
+                // 读取到备份版本并且与远程版本不一致即可下载
+                var officialCheckRes = Form1.CheckBackupFolderVersion(ClientType.Official);
+                if (officialCheckRes.gameVersion.Trim().Split('.').Length >= 3 && offical_remote_ver != officialCheckRes.gameVersion) {
+                    bool ok = await ReplaceFileDownloader.DownloadReplaceFilesAsync(ClientType.Official, officialDownloadList, officalDownloadPrefix);
+                    if (!ok)
+                        MessageBox.Show("下载已取消，已清理未完成的临时文件。");
+                }
+                var bilibiliCheckRes = Form1.CheckBackupFolderVersion(ClientType.Bilibili);
+                if (bilibiliCheckRes.gameVersion.Trim().Split('.').Length >= 3 && bilibili_remote_ver != bilibiliCheckRes.gameVersion) {
+                    bool ok = await ReplaceFileDownloader.DownloadReplaceFilesAsync(ClientType.Bilibili, bilibiliDownloadList, bilibiliDownloadPrefix);
+                    if (!ok)
+                        MessageBox.Show("下载已取消，已清理未完成的临时文件。");
+                }
+                //var wegameCheckRes = Form1.CheckBackupFolderVersion(ClientType.WeGame);
+                //if (wegameCheckRes.gameVersion.Trim().Split('.').Length >= 3 && wegame_remote_ver != wegameCheckRes.gameVersion) {
+                //    await ReplaceFileDownloader.DownloadReplaceFilesAsync(ClientType.WeGame, replaceFileList, wegameDownloadPrefix);
+                //}
+            }
+            catch (Exception ex) {
+                MessageBox.Show("下载失败：" + ex.Message);
+            }
+        }
+
 
         public static DiffResult LoadDiffResult(string OutputPath) {
             if (!File.Exists(OutputPath)) {
@@ -463,25 +547,32 @@ namespace WuWaSwitcher
             }
         }
 
-        private static Dictionary<string, ResourceItem> GetLatestResourceManifest(ClientType clientType, int ver = 2) {
+        private static ResourceManifest GetLatestResourceManifest(ClientType clientType, int ver = 2) {
             try {
                 using (WebClient client = new WebClient()) {
                     JavaScriptSerializer serializer = new JavaScriptSerializer();
                     serializer.MaxJsonLength = int.MaxValue;
                     // 解析资源json地址
-                    dynamic ResourceIndexInfo = GetResourceIndex(clientType);
+                    dynamic ResourceIndexInfo = GetResourceIndex(clientType, ver);
                     if (ResourceIndexInfo == null) { return null; }
                     string cdn_host_url = null;
                     string resources = null;
+                    string base_url = null;
+                    string version = null;
                     if (ver == 1) {
                         cdn_host_url = ResourceIndexInfo["default"]["cdnList"][0]["url"];
                         resources = ResourceIndexInfo["default"]["resources"];
+                        base_url = ResourceIndexInfo["default"]["config"]["baseUrl"];
+                        version = ResourceIndexInfo["default"]["config"]["version"];
                     }
                     else if (ver == 2) {
                         cdn_host_url = ResourceIndexInfo["cdnList"][0]["url"];
                         resources = ResourceIndexInfo["resourcePacks"]["common"]["indexFile"];
+                        base_url = ResourceIndexInfo["resourcePacks"]["common"]["baseUrl"];
+                        version = ResourceIndexInfo["resourcePacks"]["common"]["version"];
                     }
                     string resources_url = cdn_host_url + resources;
+                    string downloadPrefix_url = cdn_host_url + base_url;
                     // 请求资源json
                     string jsonResponse = client.DownloadString(resources_url);
                     if (string.IsNullOrEmpty(jsonResponse)) { throw new Exception("资源列表获取失败"); }
@@ -495,7 +586,7 @@ namespace WuWaSwitcher
                             map[item.Dest] = item;
                         }
                     }
-                    return map;
+                    return new ResourceManifest(map, downloadPrefix_url, version);
                 }
             }
             catch (Exception ex) {

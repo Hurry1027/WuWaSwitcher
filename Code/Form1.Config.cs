@@ -261,7 +261,7 @@ namespace WuWaSwitcher {
         }
 
         // 识别备份文件版本号
-        public BackupFolderCheckResult CheckBackupFolderVersion(ClientType clientType) {
+        public static BackupFolderCheckResult CheckBackupFolderVersion(ClientType clientType) {
             string backupFolderPath = Path.Combine(clientType.ToString());
             string krsdkConfigPath = Path.Combine(clientType.ToString(), "Client/Binaries/Win64/ThirdParty/KrPcSdk_Mainland/KRSDKRes/KRSDKConfig.json");
             string launcherDownloadConfigPath = Path.Combine(clientType.ToString(), "launcherDownloadConfig.json");
